@@ -45,13 +45,6 @@ PORT=8080 npm start
 
 The project is connected to Railway via GitHub. **Every push to `main` triggers an automatic redeploy** — no manual steps needed.
 
-```bash
-# Make your changes, then:
-git add .
-git commit -m "your message"
-git push origin main
-```
-
 Railway picks up the push and redeploys within ~1 minute. Check the progress in your [Railway dashboard](https://railway.app/dashboard).
 
 > **Data note:** `data/todos.json` persists on Railway's disk across redeploys. A full project reset (rare) would wipe it — export the file first if that matters.

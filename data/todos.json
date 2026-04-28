@@ -1,0 +1,412 @@
+[
+  {
+    "id": "101",
+    "title": "Dupuy Flip — cut utilities (water + electric)",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "S",
+    "description": "Cut water and electric ASAP. Send copy of deed — hold until closer to listing.",
+    "notes": "Water & electric cutoff initiated 4/3 — confirm it went through.",
+    "createdAt": "2026-04-09T00:00:00.000Z"
+  },
+  {
+    "id": "102",
+    "title": "Dupuy Flip — buy kitchen appliances",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "M",
+    "description": "Buy stove, above-stove microwave, dishwasher, and fridge. Waiting on floors before fridge delivery.",
+    "notes": "Target: by 4/15",
+    "createdAt": "2026-04-09T00:01:00.000Z"
+  },
+  {
+    "id": "103",
+    "title": "Dupuy Flip — schedule stagers + cleaners",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "S",
+    "description": "Contact stagers and cleaners. Oni has contact info in thread.",
+    "notes": "Target: by 4/10. Contacted local mentor for stager info — awaiting response.",
+    "createdAt": "2026-04-09T00:02:00.000Z"
+  },
+  {
+    "id": "104",
+    "title": "RvP Dispo — Capron: make more calls",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "S",
+    "description": "Continue outreach calls on Capron property.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:03:00.000Z"
+  },
+  {
+    "id": "105",
+    "title": "RvP Dispo — Bronze: calls + FB + email marketing",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "M",
+    "description": "Make more calls on Bronze property. Run FB and email marketing campaign.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:04:00.000Z"
+  },
+  {
+    "id": "106",
+    "title": "RvP Dispo — Peachtree: calls + FB + email marketing",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "M",
+    "description": "Make calls on Peachtree. Run FB and email marketing campaign.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:05:00.000Z"
+  },
+  {
+    "id": "107",
+    "title": "Underwrite deals in email (daily block)",
+    "status": "not-started",
+    "priority": "Crucial",
+    "effort": "S",
+    "description": "Daily 30-min block to underwrite deals sitting in email. Set a recurring calendar block.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:06:00.000Z"
+  },
+  {
+    "id": "201",
+    "title": "J. Clark — WTTA updates",
+    "status": "not-started",
+    "priority": "Very Strong",
+    "effort": "M",
+    "description": "Complete WTTA updates for J. Clark.",
+    "notes": "Due 4/14",
+    "createdAt": "2026-04-09T00:07:00.000Z"
+  },
+  {
+    "id": "202",
+    "title": "J. Clark — Bird's Eye prototype",
+    "status": "not-started",
+    "priority": "Very Strong",
+    "effort": "L",
+    "description": "Build Bird's Eye prototype for J. Clark.",
+    "notes": "Due 4/14",
+    "createdAt": "2026-04-09T00:08:00.000Z"
+  },
+  {
+    "id": "203",
+    "title": "SubTo — surplus funds call with Bruce (Diamond handoff)",
+    "status": "not-started",
+    "priority": "Very Strong",
+    "effort": "S",
+    "description": "Make the call. Discuss surplus funds with Bruce — possible Diamond handoff.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:09:00.000Z"
+  },
+  {
+    "id": "204",
+    "title": "Build Google Sheet CRM for deal tracking",
+    "status": "not-started",
+    "priority": "Very Strong",
+    "effort": "M",
+    "description": "Build a Google Sheet CRM to track deals and set follow-up reminders. Include SubTo follow-ups tab.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:10:00.000Z"
+  },
+  {
+    "id": "301",
+    "title": "AI workflow doc for Adrian (SubTo) — due 4/17",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "M",
+    "description": "Deliver AI workflow documentation to Adrian at SubTo.",
+    "notes": "Due 4/17",
+    "createdAt": "2026-04-09T00:11:00.000Z"
+  },
+  {
+    "id": "302",
+    "title": "Get Creative Podcast prep — due 4/17",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "M",
+    "description": "Prepare for Get Creative Podcast appearance.",
+    "notes": "Due 4/17",
+    "createdAt": "2026-04-09T00:12:00.000Z"
+  },
+  {
+    "id": "303",
+    "title": "Finish Maris school schedule — due 4/17",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "S",
+    "description": "Finalize Maris's school schedule.",
+    "notes": "Due by 4/17",
+    "createdAt": "2026-04-09T00:13:00.000Z"
+  },
+  {
+    "id": "304",
+    "title": "AI Quick Win — FB/email copy (Capron, Bronze, Peachtree)",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "S",
+    "description": "Write FB and email marketing copy for Capron, Bronze, and Peachtree using Claude/ChatGPT. Schedule via Buffer or Metricool.",
+    "notes": "Est. ~1 hr",
+    "createdAt": "2026-04-09T00:14:00.000Z"
+  },
+  {
+    "id": "305",
+    "title": "AI Quick Win — Buyers site copy refresh",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "S",
+    "description": "Refresh buyers site copy using Claude.",
+    "notes": "Est. ~30 min",
+    "createdAt": "2026-04-09T00:15:00.000Z"
+  },
+  {
+    "id": "306",
+    "title": "AI Quick Win — Facebook deal scraper bot",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "M",
+    "description": "Set up a deal scraper using PhantomBuster or Apify (no-code). Target: Zillow, Redfin, Crexi, Discord, Facebook — long days on market, fixer-upper keywords (tlc, investor, as-is, etc.).",
+    "notes": "Est. 2-3 hrs setup",
+    "createdAt": "2026-04-09T00:16:00.000Z"
+  },
+  {
+    "id": "307",
+    "title": "AI Quick Win — Top 5 AI-replaceable tasks audit",
+    "status": "not-started",
+    "priority": "Strong",
+    "effort": "S",
+    "description": "Focused thinking session: identify the top 5 tasks I do now that AI can replace. Candidates: Zoom attendant, SubTo birddog finder, SubTo FB daily post, social media manager, scraper bot.",
+    "notes": "Est. ~1 hr",
+    "createdAt": "2026-04-09T00:17:00.000Z"
+  },
+  {
+    "id": "401",
+    "title": "Oxford Homes — talk to VA + KY contacts",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "Talk to Virginia and Kentucky Oxford Homes contacts. Explore lease-from-you model for their homes.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:18:00.000Z"
+  },
+  {
+    "id": "402",
+    "title": "Padmission — re-engage on VA + KY needs",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "One email to re-engage Padmission on Virginia and Kentucky needs. You have the relationship.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:19:00.000Z"
+  },
+  {
+    "id": "403",
+    "title": "CoC exit strategies research (hospice, Mercy Center)",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "M",
+    "description": "Research Continuum of Care exit strategies: hospice housing, Mercy Center. 2hr block max, then make a go/no-go decision.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:20:00.000Z"
+  },
+  {
+    "id": "404",
+    "title": "Update joedoceihill.com",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "M",
+    "description": "Update personal website.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:21:00.000Z"
+  },
+  {
+    "id": "405",
+    "title": "Develop personal tracker web app",
+    "status": "in-flight",
+    "priority": "Medium",
+    "effort": "M",
+    "description": "Build and deploy a personal online todo tracker accessible from phone and desktop.",
+    "notes": "In progress — built with Node.js/Express. Deploy to Railway.app.",
+    "createdAt": "2026-04-09T00:22:00.000Z"
+  },
+  {
+    "id": "406",
+    "title": "Replace batteries in garage door opener + Camry key",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "Replace batteries in garage door opener and Camry key fob.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:23:00.000Z"
+  },
+  {
+    "id": "407",
+    "title": "RvP — Left Main + Claude integration ideas session",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "M",
+    "description": "Dedicated session to brainstorm Left Main and Claude integration ideas for RvP.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:24:00.000Z"
+  },
+  {
+    "id": "408",
+    "title": "RvP Dispo Automation — research + build plan",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "L",
+    "description": "Research how to automate the dispo process: create flyer, post on Facebook groups, schedule emails, update Carrot website. Also update buyers site.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:25:00.000Z"
+  },
+  {
+    "id": "409",
+    "title": "Establish weekly review routine",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "Set up a weekly review cadence: Man in the Arena speech + Clifton Strengths review.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:26:00.000Z"
+  },
+  {
+    "id": "410",
+    "title": "Move Verizon WiFi, Pest Control, water bill from BoA to AMEX",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "Move Verizon WiFi, Pest Control, and landing water bill autopayments from Bank of America to AMEX.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:27:00.000Z"
+  },
+  {
+    "id": "411",
+    "title": "Pace audit — identify the 20% of tasks that are uniquely mine",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "M",
+    "description": "Review repeated calendar tasks. Identify what to do more of, delegate, improve, or eliminate. Find the 20% that should only be mine.",
+    "notes": "Strength matrix: good + enjoy (keep), good + don't enjoy (delegate), enjoy + not good (improve or delegate), not good + don't enjoy (eliminate).",
+    "createdAt": "2026-04-09T00:28:00.000Z"
+  },
+  {
+    "id": "412",
+    "title": "Claude website builder side hustle",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "L",
+    "description": "Explore and build out a Claude-powered website building side business.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:29:00.000Z"
+  },
+  {
+    "id": "413",
+    "title": "Family volunteer event with Mt. Gilead",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "Organize or participate in a family volunteer event with Mt. Gilead.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:30:00.000Z"
+  },
+  {
+    "id": "414",
+    "title": "SubTo Local Leader — find venue + plan meetups",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "S",
+    "description": "Find a local venue to host SubTo meetups. Delegate search to someone local — you just approve. Align with: RV + mobile home parks, business buying, co-living, AI.",
+    "notes": "Highlight local experts: Stacy, Ja'el, Mandy, Chelsea Westover, Bryan, Phil, Felicia, Mike Davis.",
+    "createdAt": "2026-04-09T00:31:00.000Z"
+  },
+  {
+    "id": "501",
+    "title": "Find InvestorLift partner for dispo",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "S",
+    "description": "Identify and connect with an InvestorLift partner to strengthen the dispo pipeline.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:32:00.000Z"
+  },
+  {
+    "id": "502",
+    "title": "Define dispo cadence",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "S",
+    "description": "Document and systematize the dispo outreach cadence.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:33:00.000Z"
+  },
+  {
+    "id": "503",
+    "title": "Underwrite rebuilt Lexington properties",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "M",
+    "description": "Run underwriting analysis on the rebuilt Lexington properties.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:34:00.000Z"
+  },
+  {
+    "id": "504",
+    "title": "Make plan for the yellows",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "M",
+    "description": "Create a plan for the yellow properties.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:35:00.000Z"
+  },
+  {
+    "id": "505",
+    "title": "Build personal financial tracker",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "M",
+    "description": "Create a personal financial tracking system.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:36:00.000Z"
+  },
+  {
+    "id": "506",
+    "title": "Build personal GPT knowledge base",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "L",
+    "description": "Build a personal GPT knowledge base with relevant context, notes, and processes.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:37:00.000Z"
+  },
+  {
+    "id": "507",
+    "title": "AI tax review (remove sensitive data first)",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "M",
+    "description": "Run a tax review using AI. Strip sensitive PII and financial data before uploading.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:38:00.000Z"
+  },
+  {
+    "id": "508",
+    "title": "Delegate — RvP doc review follow-up (Seth & Oni)",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "S",
+    "description": "Follow up with Seth and Oni on the RvP doc review.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:39:00.000Z"
+  },
+  {
+    "id": "509",
+    "title": "Delegate — FB/email marketing execution (VA or team)",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "S",
+    "description": "Hand off FB and email marketing execution to a VA or team member. Write copy with AI first, then delegate.",
+    "notes": "",
+    "createdAt": "2026-04-09T00:40:00.000Z"
+  }
+]

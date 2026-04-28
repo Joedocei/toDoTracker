@@ -6,6 +6,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data', 'todos.json');
 
+// Railway persistence debug logging
+console.log('DATA_FILE:', DATA_FILE);
+console.log('/data exists:', fs.existsSync('/data'));
+
+try {
+  console.log('/data contents:', fs.readdirSync('/data'));
+} catch (err) {
+  console.error('Could not read /data:', err.message);
+}
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 

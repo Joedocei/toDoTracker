@@ -5,6 +5,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data', 'todos.json');
+const SEED_FILE = path.join(__dirname, 'data', 'todos.json');
 
 // Railway persistence debug logging
 console.log('DATA_FILE:', DATA_FILE);
@@ -15,6 +16,26 @@ try {
 } catch (err) {
   console.error('Could not read /data:', err.message);
 }
+
+function initializeDataFile() {
+  const dir = path.dirname(DATA_FILE);
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  if (!fs.existsSync(DATA_FILE)) {
+    if (fs.existsSync(SEED_FILE)) {
+      fs.copyFileSync(SEED_FILE, DATA_FILE);
+      console.log(`Seeded DATA_FILE from ${SEED_FILE} to ${DATA_FILE}`);
+    } else {
+      fs.writeFileSync(DATA_FILE, '[]');
+      console.log(`Created empty DATA_FILE at ${DATA_FILE}`);
+    }
+  }
+}
+
+initializeDataFile();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));

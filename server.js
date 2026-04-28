@@ -32,14 +32,24 @@ app.get('/api/todos', (req, res) => {
 
 app.post('/api/todos', (req, res) => {
   const todos = readTodos();
+  const b = req.body;
   const todo = {
     id: Date.now().toString(),
-    title: (req.body.title || '').trim() || 'Untitled',
-    status: req.body.status || 'not-started',
-    priority: req.body.priority || 'Medium',
-    effort: req.body.effort || 'M',
-    description: (req.body.description || '').trim(),
-    notes: (req.body.notes || '').trim(),
+    title: (b.title || '').trim() || 'Untitled',
+    status: b.status || 'not-started',
+    priority: b.priority || 'Medium',
+    effort: b.effort || 'M',
+    timeEstimate: b.timeEstimate || '',
+    description: (b.description || '').trim(),
+    implementationNotes: (b.implementationNotes || '').trim(),
+    notes: (b.notes || '').trim(),
+    effortJustification: (b.effortJustification || '').trim(),
+    timeJustification: (b.timeJustification || '').trim(),
+    tags: Array.isArray(b.tags) ? b.tags : [],
+    blockedBy: Array.isArray(b.blockedBy) ? b.blockedBy : [],
+    benefitsFrom: Array.isArray(b.benefitsFrom) ? b.benefitsFrom : [],
+    dependencyNotes: (b.dependencyNotes || '').trim(),
+    subTasks: Array.isArray(b.subTasks) ? b.subTasks : [],
     createdAt: new Date().toISOString(),
   };
   todos.push(todo);

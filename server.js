@@ -82,6 +82,18 @@ app.post('/api/todos', (req, res) => {
   res.status(201).json(todo);
 });
 
+app.put('/api/todos/order', (req, res) => {
+  const { ids } = req.body;
+  if (!Array.isArray(ids)) return res.status(400).json({ error: 'ids must be an array' });
+  const todos = readTodos();
+  const byId  = new Map(todos.map(t => [t.id, t]));
+  const seen  = new Set(ids);
+  const reordered = ids.filter(id => byId.has(id)).map(id => byId.get(id));
+  const rest      = todos.filter(t => !seen.has(t.id));
+  writeTodos([...reordered, ...rest]);
+  res.json({ ok: true });
+});
+
 app.put('/api/todos/:id', (req, res) => {
   const todos = readTodos();
   const idx = todos.findIndex(t => t.id === req.params.id);

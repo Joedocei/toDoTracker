@@ -408,22 +408,27 @@
     /* AI Opportunities star */
     .ds-title.star::before { content: "★ "; font-size: 0.65rem; }
 
-    /* ── Move buttons ── */
-    .move-btns { display: inline-flex; flex-direction: column; gap: 1px; margin-right: 2px; }
-    .move-btn {
-      background: none; border: 1px solid var(--border); border-radius: 3px;
-      color: var(--text-faint); font-size: 0.55rem; line-height: 1;
-      width: 16px; height: 14px; cursor: pointer; padding: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.1s;
+    /* ── Drag & drop ── */
+    .drag-handle {
+      cursor: grab; color: var(--text-faint); font-size: 1rem;
+      user-select: none; line-height: 1; margin-right: 2px;
+      transition: color 0.1s;
     }
-    .move-btn:hover { background: #e8e6e1; border-color: #bbb; color: var(--text); }
-    .st-move-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--text-faint); font-size: 0.65rem; line-height: 1;
-      padding: 0 2px; transition: color 0.1s; flex-shrink: 0;
+    .drag-handle:hover { color: var(--text-dim); }
+    .drag-handle:active { cursor: grabbing; }
+    .card.dnd-dragging  { opacity: 0.35; }
+    .card.drop-before   { box-shadow: 0 -3px 0 0 #2563eb; }
+    .card.drop-after    { box-shadow: 0  3px 0 0 #2563eb; }
+    .st-drag-handle {
+      cursor: grab; color: var(--text-faint); font-size: 0.8rem;
+      user-select: none; flex-shrink: 0; line-height: 1; padding-right: 2px;
+      transition: color 0.1s;
     }
-    .st-move-btn:hover { color: var(--text); }
+    .st-drag-handle:hover { color: var(--text-dim); }
+    .st-drag-handle:active { cursor: grabbing; }
+    .stitem.dnd-dragging { opacity: 0.3; }
+    .stitem.drop-before  { box-shadow: 0 -2px 0 0 #2563eb; }
+    .stitem.drop-after   { box-shadow: 0  2px 0 0 #2563eb; }
 
     /* ── Attachments ── */
     .att-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
@@ -1636,10 +1641,13 @@ function render() {
 
     const isAi  = todoAiAssist(t);
     const isLow = todoLowContext(t);
+    const dndAttrs = sortKey==='custom'
+      ? `draggable="true" ondragstart="cardDragStart(event,'${t.id}')" ondragover="cardDragOver(event,'${t.id}')" ondragleave="cardDragLeave(event,'${t.id}')" ondragend="cardDragEnd(event)" ondrop="cardDrop(event,'${t.id}')"`
+      : '';
     return `
-<div class="card${t.status==='completed'?' is-completed':''}${isLow?' low-context':''}" id="card-${t.id}">
+<div class="card${t.status==='completed'?' is-completed':''}${isLow?' low-context':''}" id="card-${t.id}" ${dndAttrs}>
   <div class="card-summary" onclick="toggleDetail('${t.id}')">
-    <div class="card-num">${idx+1}</div>
+    <div class="card-num">${sortKey==='custom'?'<span class="drag-handle" title="Drag to reorder">⠿</span>':idx+1}</div>
     <div class="card-body">
       <div class="card-top">
         <div class="card-title">${esc(t.title)}</div>
@@ -1650,7 +1658,6 @@ function render() {
           ${isBlk?'<span class="badge" style="background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.2)">⛔ blocked</span>':''}
           ${isAi?'<span class="badge b-ai" title="This task can largely be done by AI">⚡ AI</span>':''}
           ${isLow?'<span class="badge b-ctx" title="Add more context so the priority engine can rank this accurately">! context</span>':''}
-          ${sortKey==='custom'?`<span class="move-btns"><button class="move-btn" onclick="moveTodo('${t.id}','up',event)" title="Move up">▲</button><button class="move-btn" onclick="moveTodo('${t.id}','down',event)" title="Move down">▼</button></span>`:''}
           <button class="abtn" onclick="openModal('${t.id}')" title="Edit">✎</button>
           <button class="abtn del" onclick="confirmDelete('${t.id}')" title="Delete">✕</button>
           ${hasDet?`<button class="xbtn" id="xb-${t.id}">▼</button>`:''}
@@ -1690,7 +1697,13 @@ function render() {
     ${subs.length?`<div class="ds">
       <div class="ds-title">Sub-Tasks</div>
       <ul class="stlist">
-        ${subs.map((s,si)=>`<li class="stitem">
+        ${subs.map(s=>`<li class="stitem" draggable="true"
+            ondragstart="subDragStart(event,'${t.id}','${s.id}')"
+            ondragover="subDragOver(event,'${t.id}','${s.id}')"
+            ondragleave="subDragLeave(event,'${t.id}','${s.id}')"
+            ondragend="subDragEnd(event)"
+            ondrop="subDrop(event,'${t.id}','${s.id}')">
+          <span class="st-drag-handle" title="Drag to reorder">⠿</span>
           <div class="stbox ${s.status==='completed'?'completed':s.status==='in-flight'?'inflight':''}"
                onclick="toggleSubtask('${t.id}','${s.id}')">
             <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
@@ -1698,8 +1711,6 @@ function render() {
             </svg>
           </div>
           <span class="sttext${s.status==='completed'?' done':''}">${esc(s.title)}</span>
-          <button class="st-move-btn" onclick="moveSubtask('${t.id}','${s.id}','up',event)" title="Move up" ${si===0?'style="opacity:0.25;cursor:default"':''}>▲</button>
-          <button class="st-move-btn" onclick="moveSubtask('${t.id}','${s.id}','down',event)" title="Move down" ${si===subs.length-1?'style="opacity:0.25;cursor:default"':''}>▼</button>
         </li>`).join('')}
       </ul>
     </div>`:''}
@@ -2186,27 +2197,124 @@ function applyAiOrder() {
 function closePrioModal() { document.getElementById('prio-overlay').classList.remove('open'); }
 function prioOverlayClick(e) { if(e.target===document.getElementById('prio-overlay')) closePrioModal(); }
 
-/* ── Reorder ── */
-async function moveTodo(id, dir, e) {
-  e.stopPropagation();
-  await req('POST', `/api/todos/${id}/move`, { direction: dir });
+/* ── Drag & drop reorder ── */
+let _dragCardId = null, _dragOverCardId = null, _dragCardPos = null;
+
+function cardDragStart(e, id) {
+  if (e.target.closest('button,input,textarea,select,a,.stbox,.att-upload')) { e.preventDefault(); return; }
+  _dragCardId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  requestAnimationFrame(() => document.getElementById(`card-${id}`)?.classList.add('dnd-dragging'));
+}
+
+function cardDragOver(e, id) {
+  e.preventDefault();
+  if (id === _dragCardId) return;
+  const el = document.getElementById(`card-${id}`);
+  if (!el) return;
+  const pos = e.clientY < el.getBoundingClientRect().top + el.offsetHeight / 2 ? 'before' : 'after';
+  if (_dragOverCardId !== id || _dragCardPos !== pos) {
+    _clearCardDropIndicators();
+    _dragOverCardId = id; _dragCardPos = pos;
+    el.classList.add(`drop-${pos}`);
+  }
+}
+
+function cardDragLeave(e, id) {
+  const el = document.getElementById(`card-${id}`);
+  if (el && !el.contains(e.relatedTarget)) {
+    el.classList.remove('drop-before','drop-after');
+    if (_dragOverCardId === id) { _dragOverCardId = null; _dragCardPos = null; }
+  }
+}
+
+function cardDragEnd(e) {
+  _clearCardDropIndicators();
+  document.getElementById(`card-${_dragCardId}`)?.classList.remove('dnd-dragging');
+  _dragCardId = null; _dragOverCardId = null; _dragCardPos = null;
+}
+
+async function cardDrop(e, id) {
+  e.preventDefault();
+  const fromId = _dragCardId;
+  const toId   = id;
+  const pos    = _dragCardPos;
+  cardDragEnd(e);
+  if (!fromId || fromId === toId) return;
+
+  // Build new full order: remove fromId, insert relative to toId
+  const allIds = todos.map(t => t.id);
+  allIds.splice(allIds.indexOf(fromId), 1);
+  const toIdx = allIds.indexOf(toId);
+  allIds.splice(pos === 'before' ? toIdx : toIdx + 1, 0, fromId);
+
+  await req('PUT', '/api/todos/order', { ids: allIds });
   try { todos = await req('GET', '/api/todos'); } catch { todos = []; }
   render();
 }
 
-async function moveSubtask(todoId, subId, dir, e) {
+function _clearCardDropIndicators() {
+  document.querySelectorAll('.card.drop-before,.card.drop-after')
+    .forEach(el => el.classList.remove('drop-before','drop-after'));
+}
+
+/* subtask drag */
+let _dragSubTodoId = null, _dragSubId = null, _dragOverSubId = null, _dragSubPos = null;
+
+function subDragStart(e, todoId, subId) {
+  if (e.target.closest('.stbox')) { e.preventDefault(); return; }
+  _dragSubTodoId = todoId; _dragSubId = subId;
+  e.dataTransfer.effectAllowed = 'move';
   e.stopPropagation();
-  const todo = todos.find(t => t.id === todoId);
+  requestAnimationFrame(() => e.currentTarget.classList.add('dnd-dragging'));
+}
+
+function subDragOver(e, todoId, subId) {
+  e.preventDefault(); e.stopPropagation();
+  if (subId === _dragSubId) return;
+  const pos = e.clientY < e.currentTarget.getBoundingClientRect().top + e.currentTarget.offsetHeight / 2 ? 'before' : 'after';
+  if (_dragOverSubId !== subId || _dragSubPos !== pos) {
+    _clearSubDropIndicators();
+    _dragOverSubId = subId; _dragSubPos = pos;
+    e.currentTarget.classList.add(`drop-${pos}`);
+  }
+}
+
+function subDragLeave(e, todoId, subId) {
+  e.stopPropagation();
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.classList.remove('drop-before','drop-after');
+    if (_dragOverSubId === subId) { _dragOverSubId = null; _dragSubPos = null; }
+  }
+}
+
+function subDragEnd(e) {
+  e.stopPropagation();
+  _clearSubDropIndicators();
+  document.querySelectorAll('.stitem.dnd-dragging').forEach(el => el.classList.remove('dnd-dragging'));
+  _dragSubTodoId = null; _dragSubId = null; _dragOverSubId = null; _dragSubPos = null;
+}
+
+async function subDrop(e, todoId, subId) {
+  e.preventDefault(); e.stopPropagation();
+  const fromId = _dragSubId, toId = subId, pos = _dragSubPos, tid = _dragSubTodoId;
+  subDragEnd(e);
+  if (!fromId || fromId === toId) return;
+  const todo = todos.find(t => t.id === tid);
   if (!todo) return;
   const subs = [...(todo.subTasks || [])];
-  const idx = subs.findIndex(s => s.id === subId);
-  const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
-  if (swapIdx < 0 || swapIdx >= subs.length) return;
-  [subs[idx], subs[swapIdx]] = [subs[swapIdx], subs[idx]];
-  await req('PUT', `/api/todos/${todoId}`, { ...todo, subTasks: subs });
+  const moved = subs.splice(subs.findIndex(s => s.id === fromId), 1)[0];
+  const toIdx = subs.findIndex(s => s.id === toId);
+  subs.splice(pos === 'before' ? toIdx : toIdx + 1, 0, moved);
+  await req('PUT', `/api/todos/${tid}`, { ...todo, subTasks: subs });
   try { todos = await req('GET', '/api/todos'); } catch { todos = []; }
-  openCards.add(todoId);
+  openCards.add(tid);
   render();
+}
+
+function _clearSubDropIndicators() {
+  document.querySelectorAll('.stitem.drop-before,.stitem.drop-after')
+    .forEach(el => el.classList.remove('drop-before','drop-after'));
 }
 
 /* ── Attachments ── */

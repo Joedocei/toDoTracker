@@ -719,6 +719,8 @@
       </div>
     </div>
 
+    <input class="search-box" type="text" placeholder="Search titles and descriptions…" oninput="schedSearch(this.value)" style="margin-bottom:18px">
+
     <div class="fgroup">
       <div class="fgroup-title">Status</div>
       <div class="pill-row" id="grp-status">
@@ -766,13 +768,6 @@
     </div>
 
     <div class="fgroup">
-      <div class="fgroup-title">Tags</div>
-      <div class="tag-cloud" id="tag-cloud">
-        <span class="tpill active" onclick="setTagFilter('',this)">All Tags</span>
-      </div>
-    </div>
-
-    <div class="fgroup">
       <div class="fgroup-title">Sort</div>
       <div class="pill-row" id="grp-sort">
         <button class="pill active" onclick="setSort('priority',this)">Recommended</button>
@@ -783,7 +778,12 @@
       </div>
     </div>
 
-    <input class="search-box" type="text" placeholder="Search titles and descriptions…" oninput="schedSearch(this.value)">
+    <div class="fgroup">
+      <div class="fgroup-title">Tags</div>
+      <div class="tag-cloud" id="tag-cloud">
+        <span class="tpill active" onclick="setTagFilter('',this)">All Tags</span>
+      </div>
+    </div>
   </aside>
 
   <!-- ══ MAIN PANEL ══ -->

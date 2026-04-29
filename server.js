@@ -307,7 +307,8 @@ app.get('/api/attachments/:storedName', (req, res) => {
   if (!found) return res.status(404).json({ error: 'Not found' });
   const filePath = path.join(UPLOADS_DIR, storedName);
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File missing' });
-  res.setHeader('Content-Disposition', `attachment; filename="${found.name.replace(/"/g, '')}"`);
+  res.setHeader('Content-Type', found.type || 'application/octet-stream');
+  res.setHeader('Content-Disposition', `inline; filename="${found.name.replace(/"/g, '')}"`);
   res.sendFile(filePath);
 });
 

@@ -17,6 +17,19 @@ try {
   console.error('Could not read /data:', err.message);
 }
 
+function readJsonArray(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) return [];
+    const raw = fs.readFileSync(filePath, 'utf8').trim();
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.error(`Failed to read JSON from ${filePath}:`, err.message);
+    return [];
+  }
+}
+
 function initializeDataFile() {
   const dir = path.dirname(DATA_FILE);
 
@@ -24,15 +37,27 @@ function initializeDataFile() {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  if (!fs.existsSync(DATA_FILE)) {
-    if (fs.existsSync(SEED_FILE)) {
-      fs.copyFileSync(SEED_FILE, DATA_FILE);
-      console.log(`Seeded DATA_FILE from ${SEED_FILE} to ${DATA_FILE}`);
-    } else {
-      fs.writeFileSync(DATA_FILE, '[]');
-      console.log(`Created empty DATA_FILE at ${DATA_FILE}`);
-    }
+  const currentTodos = readJsonArray(DATA_FILE);
+  const seedTodos = readJsonArray(SEED_FILE);
+
+  const todosById = new Map();
+
+  // Seed todos first
+  for (const todo of seedTodos) {
+    todosById.set(todo.id, todo);
   }
+
+  // Current Railway volume todos win if there is an ID conflict
+  for (const todo of currentTodos) {
+    todosById.set(todo.id, todo);
+  }
+
+  const mergedTodos = Array.from(todosById.values());
+
+  fs.writeFileSync(DATA_FILE, JSON.stringify(mergedTodos, null, 2));
+
+  console.log(`Merged ${seedTodos.length} seed todos with ${currentTodos.length} current todos.`);
+  console.log(`DATA_FILE now has ${mergedTodos.length} todos.`);
 }
 
 initializeDataFile();

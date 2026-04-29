@@ -30,7 +30,7 @@ function writeTodos(todos) {
 }
 
 app.get('/api/todos', (req, res) => {
-  res.json(readTodos());
+  res.json(readTodos().filter(t => !t.deleted));
 });
 
 app.post('/api/todos', (req, res) => {
@@ -71,9 +71,37 @@ app.put('/api/todos/:id', (req, res) => {
 
 app.delete('/api/todos/:id', (req, res) => {
   const todos = readTodos();
-  const filtered = todos.filter(t => t.id !== req.params.id);
+  const idx = todos.findIndex(t => t.id === req.params.id && !t.deleted);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  todos[idx] = { ...todos[idx], deleted: true, deletedAt: new Date().toISOString() };
+  writeTodos(todos);
+  res.json({ ok: true });
+});
+
+app.get('/api/trash', (req, res) => {
+  res.json(readTodos().filter(t => t.deleted));
+});
+
+app.post('/api/trash/:id/restore', (req, res) => {
+  const todos = readTodos();
+  const idx = todos.findIndex(t => t.id === req.params.id && t.deleted);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  const { deleted: _d, deletedAt: _da, ...restored } = todos[idx];
+  todos[idx] = restored;
+  writeTodos(todos);
+  res.json(restored);
+});
+
+app.delete('/api/trash/:id', (req, res) => {
+  const todos = readTodos();
+  const filtered = todos.filter(t => !(t.id === req.params.id && t.deleted));
   if (filtered.length === todos.length) return res.status(404).json({ error: 'Not found' });
   writeTodos(filtered);
+  res.json({ ok: true });
+});
+
+app.delete('/api/trash', (req, res) => {
+  writeTodos(readTodos().filter(t => !t.deleted));
   res.json({ ok: true });
 });
 
@@ -146,7 +174,7 @@ async function callEnrichBatch(batchPayload) {
 app.post('/api/ai/enrich', async (req, res) => {
   if (!anthropic) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured on this server.' });
   try {
-    const allTodos = readTodos();
+    const allTodos = readTodos().filter(t => !t.deleted);
     if (!allTodos.length) return res.json([]);
 
     const payload = buildEnrichPayload(allTodos);

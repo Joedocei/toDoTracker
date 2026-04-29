@@ -588,6 +588,66 @@
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
 
+    /* ── Trash button ── */
+    .btn-trash {
+      background: var(--surface);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .btn-trash:hover { background: rgba(220,38,38,0.06); color: #dc2626; border-color: rgba(220,38,38,0.2); }
+
+    /* ── Trash modal items ── */
+    .trash-item {
+      display: flex;
+      align-items: center;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .trash-item:last-child { border-bottom: none; }
+    .trash-item-info { flex: 1; min-width: 0; }
+    .trash-item-title {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .trash-item-date { font-size: 0.7rem; color: var(--text-faint); margin-top: 2px; }
+    .btn-restore {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.1s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-restore:hover { border-color: var(--c-completed); color: var(--c-completed); }
+    .btn-perm-del {
+      background: none;
+      border: none;
+      color: var(--text-faint);
+      cursor: pointer;
+      font-size: 0.82rem;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: all 0.1s;
+      flex-shrink: 0;
+    }
+    .btn-perm-del:hover { color: #dc2626; background: rgba(220,38,38,0.07); }
+
     /* ── AI enrich button ── */
     .btn-enrich {
       background: var(--surface);
@@ -724,6 +784,7 @@
     <div class="main-header">
       <span class="main-count" id="main-count"></span>
       <div style="display:flex;gap:7px;align-items:center">
+        <button class="btn-trash" id="btn-trash" onclick="openTrash()">🗑 Trash</button>
         <button class="btn-enrich" id="btn-enrich" onclick="enrichWithAI()">✦ Auto-fill</button>
         <button class="btn-add" onclick="openModal()">+ Add Todo</button>
       </div>
@@ -872,6 +933,22 @@
   </div>
 </div>
 
+<!-- ══ TRASH MODAL ══ -->
+<div class="overlay" id="trash-overlay" onclick="trashOverlayClick(event)">
+  <div class="modal" style="max-width:560px" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2>🗑 Trash</h2>
+      <button class="modal-x" onclick="closeTrash()">✕</button>
+    </div>
+    <div id="trash-body" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="btn-empty-trash" onclick="emptyTrash()"
+              style="color:#dc2626;border-color:rgba(220,38,38,0.3);margin-right:auto">Empty Trash</button>
+      <button class="btn btn-ghost" onclick="closeTrash()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -905,6 +982,89 @@ async function req(method, url, body) {
 async function load() {
   try { todos = await req('GET','/api/todos'); } catch { todos=[]; }
   render();
+  refreshTrashBadge();
+}
+
+/* ── Trash ── */
+async function refreshTrashBadge() {
+  try {
+    const items = await req('GET', '/api/trash');
+    const btn = document.getElementById('btn-trash');
+    btn.textContent = items.length ? `🗑 Trash (${items.length})` : '🗑 Trash';
+  } catch {}
+}
+
+async function openTrash() {
+  document.getElementById('trash-overlay').classList.add('open');
+  await loadTrash();
+}
+function closeTrash() { document.getElementById('trash-overlay').classList.remove('open'); }
+function trashOverlayClick(e) { if (e.target===document.getElementById('trash-overlay')) closeTrash(); }
+
+async function loadTrash() {
+  const body = document.getElementById('trash-body');
+  const emptyBtn = document.getElementById('btn-empty-trash');
+  body.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-faint);font-size:0.85rem">Loading…</div>';
+  try {
+    const items = await req('GET', '/api/trash');
+    if (!items.length) {
+      body.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-dim);font-size:0.88rem">Trash is empty</div>';
+      emptyBtn.style.display = 'none';
+      return;
+    }
+    emptyBtn.style.display = '';
+    body.innerHTML = items.map(t => `
+      <div class="trash-item" id="ti-${t.id}">
+        <div class="trash-item-info">
+          <div class="trash-item-title" title="${esc(t.title)}">${esc(t.title)}</div>
+          <div class="trash-item-date">${t.deletedAt ? 'Deleted ' + new Date(t.deletedAt).toLocaleString() : ''}</div>
+        </div>
+        <button class="btn-restore" onclick="restoreTodo('${t.id}')">Restore</button>
+        <button class="btn-perm-del" onclick="permanentDelete('${t.id}')" title="Delete forever">✕</button>
+      </div>`).join('');
+  } catch(err) {
+    body.innerHTML = `<div style="padding:20px;text-align:center;color:#dc2626;font-size:0.85rem">Error: ${esc(err.message)}</div>`;
+  }
+}
+
+async function restoreTodo(id) {
+  try {
+    const restored = await req('POST', `/api/trash/${id}/restore`);
+    todos.push(restored);
+    render();
+    refreshTrashBadge();
+    await loadTrash();
+  } catch(err) {
+    let msg = err.message;
+    try { const j = JSON.parse(msg); if (j.error) msg = j.error; } catch {}
+    alert('Restore failed: ' + msg);
+  }
+}
+
+async function permanentDelete(id) {
+  if (!confirm('Permanently delete this todo? This cannot be undone.')) return;
+  try {
+    await req('DELETE', `/api/trash/${id}`);
+    refreshTrashBadge();
+    await loadTrash();
+  } catch(err) {
+    let msg = err.message;
+    try { const j = JSON.parse(msg); if (j.error) msg = j.error; } catch {}
+    alert('Delete failed: ' + msg);
+  }
+}
+
+async function emptyTrash() {
+  if (!confirm('Permanently delete everything in trash? This cannot be undone.')) return;
+  try {
+    await req('DELETE', '/api/trash');
+    refreshTrashBadge();
+    await loadTrash();
+  } catch(err) {
+    let msg = err.message;
+    try { const j = JSON.parse(msg); if (j.error) msg = j.error; } catch {}
+    alert('Error emptying trash: ' + msg);
+  }
 }
 async function apicreate(d) { const t=await req('POST','/api/todos',d); todos.push(t); render(); }
 async function apiupdate(id,d) {
@@ -913,7 +1073,9 @@ async function apiupdate(id,d) {
 }
 async function apidelete(id) {
   await req('DELETE',`/api/todos/${id}`);
-  todos=todos.filter(t=>t.id!==id); render();
+  todos=todos.filter(t=>t.id!==id);
+  render();
+  refreshTrashBadge();
 }
 
 /* ── Filters ── */
@@ -1146,8 +1308,6 @@ async function toggleSubtask(todoId,subId) {
 }
 
 async function confirmDelete(id) {
-  const t=todos.find(x=>x.id===id);
-  if(!t||!confirm(`Delete "${t.title}"?`)) return;
   await apidelete(id);
 }
 
@@ -1256,7 +1416,7 @@ async function submitForm(){
 }
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeModal(); closeAIModal(); }
+  if(e.key==='Escape'){ closeModal(); closeAIModal(); closeTrash(); }
   if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&document.getElementById('overlay').classList.contains('open')) submitForm();
 });
 

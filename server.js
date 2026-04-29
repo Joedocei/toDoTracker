@@ -5,62 +5,6 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data', 'todos.json');
-const SEED_FILE = path.join(__dirname, 'data', 'todos.json');
-
-// Railway persistence debug logging
-console.log('DATA_FILE:', DATA_FILE);
-console.log('/data exists:', fs.existsSync('/data'));
-
-try {
-  console.log('/data contents:', fs.readdirSync('/data'));
-} catch (err) {
-  console.error('Could not read /data:', err.message);
-}
-
-function readJsonArray(filePath) {
-  try {
-    if (!fs.existsSync(filePath)) return [];
-    const raw = fs.readFileSync(filePath, 'utf8').trim();
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (err) {
-    console.error(`Failed to read JSON from ${filePath}:`, err.message);
-    return [];
-  }
-}
-
-function initializeDataFile() {
-  const dir = path.dirname(DATA_FILE);
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-
-  const currentTodos = readJsonArray(DATA_FILE);
-  const seedTodos = readJsonArray(SEED_FILE);
-
-  const todosById = new Map();
-
-  // Seed todos first
-  for (const todo of seedTodos) {
-    todosById.set(todo.id, todo);
-  }
-
-  // Current Railway volume todos win if there is an ID conflict
-  for (const todo of currentTodos) {
-    todosById.set(todo.id, todo);
-  }
-
-  const mergedTodos = Array.from(todosById.values());
-
-  fs.writeFileSync(DATA_FILE, JSON.stringify(mergedTodos, null, 2));
-
-  console.log(`Merged ${seedTodos.length} seed todos with ${currentTodos.length} current todos.`);
-  console.log(`DATA_FILE now has ${mergedTodos.length} todos.`);
-}
-
-initializeDataFile();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));

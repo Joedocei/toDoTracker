@@ -98,6 +98,21 @@
     .stat-box-trash:hover { background: rgba(220,38,38,0.06); border-color: rgba(220,38,38,0.2); }
 
     /* Filter groups */
+    .filter-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .filter-header-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); }
+    .btn-reset-filters {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 9px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .btn-reset-filters:hover { background: #e8e6e1; color: var(--text); border-color: #c8c5bf; }
     .fgroup { margin-bottom: 14px; }
     .fgroup-title {
       font-size: 0.6rem;
@@ -651,6 +666,113 @@
     }
     .btn-perm-del:hover { color: #dc2626; background: rgba(220,38,38,0.07); }
 
+    /* ── Prioritize button ── */
+    .btn-prioritize {
+      background: var(--surface);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .btn-prioritize:hover { background: var(--surface2); color: var(--text); }
+    .btn-prioritize:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── AI-assist and low-context card indicators ── */
+    .b-ai  { background: rgba(234,179,8,0.10); color: #92400e; border-color: rgba(234,179,8,0.35); }
+    .b-ctx { background: rgba(239,68,68,0.08); color: #dc2626; border-color: rgba(239,68,68,0.20); }
+    .card.low-context { border-left: 3px solid rgba(239,68,68,0.40); }
+
+    /* ── Priority modal ── */
+    .prio-modal { max-width: 800px; }
+
+    .prio-session { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .prio-session input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.12s;
+      flex: 1;
+      min-width: 140px;
+    }
+    .prio-session input:focus { border-color: #aaa; }
+    .prio-session input::placeholder { color: var(--text-faint); }
+
+    .prio-source {
+      font-size: 0.63rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .src-ai    { background: rgba(139,92,246,0.12); color: #7c3aed; border: 1px solid rgba(139,92,246,0.25); }
+    .src-rules { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+
+    .prio-loading { text-align: center; padding: 50px 20px; color: var(--text-dim); font-size: 0.9rem; }
+
+    /* Next-todo highlight card */
+    .prio-next {
+      background: linear-gradient(135deg,#f8f7f4,#f0ede8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 4px;
+    }
+    .prio-next-rank { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); margin-bottom: 6px; }
+    .prio-next-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 7px; line-height: 1.3; }
+    .prio-next-reason { font-size: 0.81rem; color: #555; line-height: 1.55; margin-bottom: 9px; }
+    .prio-next-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .prio-timebox {
+      font-size: 0.72rem; font-weight: 600; color: #0891b2;
+      background: rgba(8,145,178,0.08); border: 1px solid rgba(8,145,178,0.2);
+      border-radius: 20px; padding: 2px 10px;
+    }
+
+    /* Ranked list */
+    .prio-ranked-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .prio-ranked-item:last-child { border-bottom: none; }
+    .prio-rank-num { width: 22px; font-size: 0.72rem; font-weight: 700; color: var(--text-faint); flex-shrink: 0; padding-top: 2px; text-align: right; }
+    .prio-ranked-body { flex: 1; min-width: 0; }
+    .prio-ranked-title { font-size: 0.86rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .prio-ranked-reason { font-size: 0.77rem; color: var(--text-dim); line-height: 1.45; }
+    .prio-ranked-meta { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+
+    /* Action plan */
+    .prio-plan-group { margin-bottom: 14px; }
+    .prio-plan-group:last-child { margin-bottom: 0; }
+    .prio-plan-day { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); margin-bottom: 6px; }
+    .prio-plan-item { font-size: 0.82rem; color: var(--text-dim); padding: 4px 0 4px 10px; border-left: 2px solid var(--border); margin-bottom: 4px; line-height: 1.45; }
+
+    /* Category groups */
+    .prio-cat-group { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .prio-cat-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .prio-cat-name { font-size: 0.7rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .prio-cat-items { display: flex; flex-wrap: wrap; gap: 5px; }
+    .prio-cat-item { font-size: 0.71rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 2px 9px; color: var(--text-dim); }
+
+    /* Overdue flags */
+    .prio-overdue-item { display: flex; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+    .prio-overdue-item:last-child { border-bottom: none; }
+    .prio-overdue-title { flex: 1; color: var(--text); font-weight: 500; }
+    .prio-overdue-action { font-size: 0.68rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; white-space: nowrap; }
+    .poa-complete   { background: rgba(22,163,74,0.10);  color: #16a34a; border: 1px solid rgba(22,163,74,0.25); }
+    .poa-reschedule { background: rgba(234,179,8,0.10);  color: #92400e; border: 1px solid rgba(234,179,8,0.30); }
+    .poa-active     { background: rgba(37,99,235,0.10);  color: #2563eb; border: 1px solid rgba(37,99,235,0.25); }
+
+    /* Money-tier mini-badges used inside modal */
+    .tier-now  { background: rgba(22,163,74,0.10);  color: #15803d; border: 1px solid rgba(22,163,74,0.25); }
+    .tier-soon { background: rgba(37,99,235,0.10);  color: #1d4ed8; border: 1px solid rgba(37,99,235,0.25); }
+    .tier-time { background: rgba(217,119,6,0.10);  color: #b45309; border: 1px solid rgba(217,119,6,0.25); }
+    .tier-res  { background: rgba(107,114,128,0.10);color: #6b7280; border: 1px solid rgba(107,114,128,0.2); }
+
     /* ── AI enrich button ── */
     .btn-enrich {
       background: var(--surface);
@@ -722,6 +844,11 @@
 
     <input class="search-box" type="text" placeholder="Search titles and descriptions…" oninput="schedSearch(this.value)" style="margin-bottom:18px">
 
+    <div class="filter-header">
+      <span class="filter-header-label">Filters &amp; Sort</span>
+      <button class="btn-reset-filters" onclick="resetFilters()">↺ Reset</button>
+    </div>
+
     <div class="fgroup">
       <div class="fgroup-title">Status</div>
       <div class="pill-row" id="grp-status">
@@ -776,6 +903,7 @@
         <button class="pill" onclick="setSort('effort',this)">By Effort</button>
         <button class="pill" onclick="setSort('status',this)">By Status</button>
         <button class="pill" onclick="setSort('newest',this)">Newest</button>
+        <button class="pill" id="pill-ai-sort" onclick="setAiSort(this)" style="opacity:0.38;cursor:not-allowed">✦ AI Order</button>
       </div>
     </div>
 
@@ -794,6 +922,7 @@
       <div style="display:flex;gap:7px;align-items:center">
         <button class="btn-trash" id="btn-trash" onclick="openTrash()">🗑 Trash</button>
         <button class="btn-enrich" id="btn-enrich" onclick="enrichWithAI()">✦ Auto-fill</button>
+        <button class="btn-prioritize" id="btn-prioritize" onclick="openPriorityModal()">✦ Prioritize</button>
         <button class="btn-add" onclick="openModal()">+ Add Todo</button>
       </div>
     </div>
@@ -957,6 +1086,36 @@
   </div>
 </div>
 
+<!-- ══ PRIORITY MODAL ══ -->
+<div class="overlay" id="prio-overlay" onclick="prioOverlayClick(event)">
+  <div class="modal prio-modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <h2>✦ Prioritize</h2>
+        <span id="prio-source-badge" class="prio-source src-rules" style="display:none"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <button class="btn btn-ghost" id="btn-prio-refresh" onclick="runPrioritize()" style="font-size:0.75rem;padding:5px 11px">↺ Refresh</button>
+        <button class="modal-x" onclick="closePrioModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding-bottom:0">
+      <div class="prio-session">
+        <input id="prio-time" type="text" placeholder="Time available (e.g. 30 min, 2 hrs, full day…)">
+        <input id="prio-context" type="text" placeholder="Context (e.g. heavy work day, free Saturday…)">
+      </div>
+      <div id="prio-body" style="max-height:calc(72vh - 90px);overflow-y:auto;margin:0 -20px;padding:0 20px 20px">
+        <div class="prio-loading">Press <strong>↺ Refresh</strong> to run AI prioritization…</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <span id="prio-cached-at" style="font-size:0.72rem;color:var(--text-faint);margin-right:auto"></span>
+      <button class="btn btn-ghost" onclick="closePrioModal()">Close</button>
+      <button class="btn btn-primary" id="btn-apply-order" onclick="applyAiOrder()" style="display:none">Apply Order to List</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -979,6 +1138,10 @@ let searchTmr   = null;
 let curTags     = [];
 const openCards = new Set();
 
+// Priority engine state
+let priorityRec  = null; // last recommendation payload from /api/ai/prioritize
+let aiRankedIds  = null; // ordered todo IDs from AI recommendation
+
 /* ── API ── */
 async function req(method, url, body) {
   const opts = { method, headers: {'Content-Type':'application/json'} };
@@ -990,9 +1153,11 @@ async function req(method, url, body) {
 /* ── Filter state persistence ── */
 function saveFilterState() {
   try {
-    localStorage.setItem('tf', JSON.stringify(
-      { fStatus, fPriority, fEffort, fTime, fTag, sortKey, query }
-    ));
+    localStorage.setItem('tf', JSON.stringify({
+      fStatus, fPriority, fEffort, fTime, fTag,
+      sortKey: sortKey === 'ai' ? 'priority' : sortKey, // AI order is ephemeral
+      query,
+    }));
   } catch {}
 }
 
@@ -1153,7 +1318,41 @@ function setTagFilter(tag, btn) {
   btn.classList.add('active');
   render();
 }
-function setSort(val, btn) { sortKey=val; activePill('grp-sort',btn); render(); }
+function setSort(val, btn) {
+  sortKey=val;
+  aiRankedIds=null; updateAiSortPill();
+  activePill('grp-sort',btn);
+  render();
+}
+function setAiSort(btn) {
+  if (!aiRankedIds) return;
+  sortKey='ai';
+  activePill('grp-sort',btn);
+  render();
+}
+function updateAiSortPill() {
+  const pill = document.getElementById('pill-ai-sort');
+  if (!pill) return;
+  pill.style.opacity  = aiRankedIds ? '' : '0.38';
+  pill.style.cursor   = aiRankedIds ? '' : 'not-allowed';
+}
+
+function resetFilters() {
+  fStatus='all'; fPriority=''; fEffort=''; fTime=''; fTag=''; sortKey='priority'; query='';
+  aiRankedIds=null; updateAiSortPill();
+  ['grp-status','grp-priority','grp-effort','grp-time','grp-sort'].forEach(id => {
+    const grp = document.getElementById(id);
+    grp.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+    grp.querySelector('.pill').classList.add('active');
+  });
+  const tc = document.getElementById('tag-cloud');
+  tc.querySelectorAll('.tpill').forEach(b => b.classList.remove('active'));
+  tc.querySelector('.tpill').classList.add('active');
+  const sb = document.querySelector('.search-box');
+  if (sb) sb.value = '';
+  render();
+}
+
 function schedSearch(v) {
   clearTimeout(searchTmr);
   searchTmr=setTimeout(()=>{ query=v.trim().toLowerCase(); render(); },180);
@@ -1182,6 +1381,13 @@ function visible() {
       case 'time':     return (TIME_ORDER[a.timeEstimate]??9)-(TIME_ORDER[b.timeEstimate]??9);
       case 'title':    return a.title.localeCompare(b.title);
       case 'newest':   return (b.createdAt||b.id)>(a.createdAt||a.id)?1:-1;
+      case 'ai': {
+        if (aiRankedIds) {
+          const rank = new Map(aiRankedIds.map((id,i) => [id,i]));
+          return (rank.has(a.id) ? rank.get(a.id) : 999) - (rank.has(b.id) ? rank.get(b.id) : 999);
+        }
+        return (PRIORITY_ORDER[a.priority]??9)-(PRIORITY_ORDER[b.priority]??9);
+      }
       default: return 0;
     }
   });
@@ -1209,6 +1415,19 @@ function esc(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(
 function sbc(s){ return {'not-started':'b-ns','in-flight':'b-if',completed:'b-cmp'}[s]||'b-ns'; }
 function slbl(s){ return {'not-started':'Not Started','in-flight':'In Flight',completed:'Completed'}[s]||s; }
 function sdotCls(s){ return {'in-flight':'inflight',completed:'completed'}[s]||''; }
+
+// Mirror engine detection logic client-side for card badges
+const AI_ASSIST_RE = /\bcopy\b|\bdraft\b|\bwrite\b|\bwriting\b|\bsummariz|\baudit\b|\bscraper\b|\btemplate\b|email.{0,10}marketing|marketing.{0,10}email|fb.{0,5}post|facebook.{0,5}post|ai.{0,10}quick win|quick win.{0,10}ai/i;
+function todoAiAssist(t) {
+  if (t.aiAssist !== undefined) return t.aiAssist;
+  const text = [t.title, t.description, t.notes, ...(t.tags||[])].filter(Boolean).join(' ');
+  const effort = (t.effort || t.timeEstimate || '').toLowerCase();
+  const isSmall = ['xs','s'].includes(effort);
+  return AI_ASSIST_RE.test(text) || (isSmall && /\b(write|draft|copy|email|post|research|summarize)\b/i.test(text));
+}
+function todoLowContext(t) {
+  return [t.description, t.notes].filter(Boolean).join(' ').trim().length < 30;
+}
 
 /* ── Render ── */
 function render() {
@@ -1248,8 +1467,10 @@ function render() {
                  t.dependencyNotes||subs.length||
                  (t.blockedBy&&t.blockedBy.length)||(t.benefitsFrom&&t.benefitsFrom.length);
 
+    const isAi  = todoAiAssist(t);
+    const isLow = todoLowContext(t);
     return `
-<div class="card${t.status==='completed'?' is-completed':''}" id="card-${t.id}">
+<div class="card${t.status==='completed'?' is-completed':''}${isLow?' low-context':''}" id="card-${t.id}">
   <div class="card-summary" onclick="toggleDetail('${t.id}')">
     <div class="card-num">${idx+1}</div>
     <div class="card-body">
@@ -1260,6 +1481,8 @@ function render() {
           <span class="badge ${sbc(t.status)}">${slbl(t.status)}</span>
           <span class="badge b-eff">${esc(t.effort||'M')}</span>
           ${isBlk?'<span class="badge" style="background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.2)">⛔ blocked</span>':''}
+          ${isAi?'<span class="badge b-ai" title="This task can largely be done by AI">⚡ AI</span>':''}
+          ${isLow?'<span class="badge b-ctx" title="Add more context so the priority engine can rank this accurately">! context</span>':''}
           <button class="abtn" onclick="openModal('${t.id}')" title="Edit">✎</button>
           <button class="abtn del" onclick="confirmDelete('${t.id}')" title="Delete">✕</button>
           ${hasDet?`<button class="xbtn" id="xb-${t.id}">▼</button>`:''}
@@ -1479,7 +1702,7 @@ async function submitForm(){
 }
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeModal(); closeAIModal(); closeTrash(); }
+  if(e.key==='Escape'){ closeModal(); closeAIModal(); closeTrash(); closePrioModal(); }
   if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&document.getElementById('overlay').classList.contains('open')) submitForm();
 });
 
@@ -1590,6 +1813,176 @@ async function applyEnrichment() {
     btn.textContent = 'Apply All';
   }
 }
+
+/* ── AI Prioritize ── */
+function moneyTierBadge(tier) {
+  const map = {
+    'money-now':      ['tier-now',  'Money Now'],
+    'money-soon':     ['tier-soon', 'Money Soon'],
+    'time-sensitive': ['tier-time', 'Time Sensitive'],
+    'research':       ['tier-res',  'Research'],
+  };
+  const [cls, label] = map[tier] || map.research;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+async function openPriorityModal() {
+  document.getElementById('prio-overlay').classList.add('open');
+  // Try cached result first — no API call if we have it
+  try {
+    const r = await fetch('/api/ai/prioritize');
+    if (r.status === 200) {
+      priorityRec = await r.json();
+      renderPriorityModal(priorityRec);
+      return;
+    }
+  } catch {}
+  // No cache yet
+  document.getElementById('prio-body').innerHTML = '<div class="prio-loading">Press <strong>↺ Refresh</strong> to run AI prioritization…</div>';
+  document.getElementById('btn-apply-order').style.display = 'none';
+  document.getElementById('prio-source-badge').style.display = 'none';
+  document.getElementById('prio-cached-at').textContent = '';
+}
+
+async function runPrioritize() {
+  const btn = document.getElementById('btn-prio-refresh');
+  btn.disabled = true; btn.textContent = '↺ Running…';
+  document.getElementById('prio-body').innerHTML = '<div class="prio-loading">Analyzing your todos…</div>';
+  document.getElementById('btn-apply-order').style.display = 'none';
+  try {
+    const timeAvailable = document.getElementById('prio-time').value.trim() || null;
+    const userContext   = document.getElementById('prio-context').value.trim() || null;
+    priorityRec = await req('POST', '/api/ai/prioritize', { timeAvailable, userContext });
+    renderPriorityModal(priorityRec);
+  } catch(err) {
+    let msg = err.message;
+    try { const j=JSON.parse(msg); if(j.error) msg=j.error; } catch {}
+    document.getElementById('prio-body').innerHTML = `<div class="prio-loading" style="color:#dc2626">Error: ${esc(msg)}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '↺ Refresh';
+  }
+}
+
+function renderPriorityModal(data) {
+  const { source, recommendation: rec, context, cachedAt } = data;
+
+  // Source badge
+  const srcBadge = document.getElementById('prio-source-badge');
+  srcBadge.style.display = '';
+  if (source === 'anthropic') {
+    srcBadge.className = 'prio-source src-ai';
+    srcBadge.textContent = '✦ Claude';
+  } else {
+    srcBadge.className = 'prio-source src-rules';
+    srcBadge.textContent = 'Rules engine';
+  }
+
+  document.getElementById('prio-cached-at').textContent =
+    cachedAt ? 'Generated ' + new Date(cachedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
+  document.getElementById('btn-apply-order').style.display = '';
+
+  const { nextTodo, rankedTodos=[], actionPlan, categories=[], overdueFlags=[] } = rec;
+
+  const aiChip = (t) => (t&&t.aiAssist) ? '<span class="badge b-ai">⚡ AI</span>' : '';
+
+  // ── Section 1: Next todo ──
+  const s1 = nextTodo ? `
+<div class="prio-next">
+  <div class="prio-next-rank">✦ Do This Next</div>
+  <div class="prio-next-title">${esc(nextTodo.title)}</div>
+  <div class="prio-next-reason">${esc(nextTodo.reason)}</div>
+  <div class="prio-next-meta">
+    ${moneyTierBadge(rankedTodos[0]?.moneyTier)}
+    <span class="prio-timebox">⏱ ${esc(nextTodo.timeBox)}</span>
+    ${aiChip(rankedTodos[0])}
+    <span style="font-size:0.78rem;color:var(--text-dim);flex:1">${esc(nextTodo.nextAction)}</span>
+  </div>
+</div>` : '';
+
+  // ── Section 2: Ranked list ──
+  const s2 = rankedTodos.length ? `
+<div class="msec">
+  <div class="msec-title">Ranked List</div>
+  ${rankedTodos.map(t => `
+  <div class="prio-ranked-item">
+    <div class="prio-rank-num">${t.rank}</div>
+    <div class="prio-ranked-body">
+      <div class="prio-ranked-title">${esc(t.title)}</div>
+      <div class="prio-ranked-reason">${esc(t.reason)}</div>
+      <div class="prio-ranked-meta">
+        ${moneyTierBadge(t.moneyTier)}
+        <span class="badge b-eff" style="font-family:inherit;font-weight:500">${esc(t.mainCategory||'')}${t.subCategory?' / '+esc(t.subCategory):''}</span>
+        ${aiChip(t)}
+      </div>
+    </div>
+  </div>`).join('')}
+</div>` : '';
+
+  // ── Section 3: Action plan ──
+  const planGroup = (label, items) => items&&items.length ? `
+<div class="prio-plan-group">
+  <div class="prio-plan-day">${label}</div>
+  ${items.map(i=>`<div class="prio-plan-item">${esc(i)}</div>`).join('')}
+</div>` : '';
+
+  const s3 = actionPlan ? `
+<div class="msec">
+  <div class="msec-title">Action Plan</div>
+  ${planGroup('Today', actionPlan.today)}
+  ${planGroup('This Week', actionPlan.thisWeek)}
+  ${planGroup('Next Week', actionPlan.nextWeek)}
+</div>` : '';
+
+  // ── Section 4: Category groups ──
+  const s4 = categories.length ? `
+<div class="msec">
+  <div class="msec-title">By Category</div>
+  ${categories.map(c => {
+    const items = context?.categoryGroups?.[c.category] || [];
+    return `
+<div class="prio-cat-group">
+  <div class="prio-cat-name">${esc(c.category)} <span style="font-weight:400;color:var(--text-faint)">(${items.length})</span></div>
+  <div class="prio-cat-items">${items.map(i=>`<span class="prio-cat-item">${esc(i.title)}</span>`).join('')}</div>
+</div>`;
+  }).join('')}
+</div>` : '';
+
+  // ── Overdue flags ──
+  const overdueActionMap = {
+    'mark-complete': ['poa-complete',   'Mark Complete'],
+    'reschedule':    ['poa-reschedule', 'Reschedule'],
+    'still-active':  ['poa-active',     'Still Active'],
+  };
+  const s5 = overdueFlags.length ? `
+<div class="msec">
+  <div class="msec-title" style="color:#dc2626">⚠ Overdue — Needs Acknowledgment</div>
+  ${overdueFlags.map(f => {
+    const [cls, label] = overdueActionMap[f.suggestedAction] || ['poa-active', f.suggestedAction||'Review'];
+    return `
+<div class="prio-overdue-item">
+  <div class="prio-overdue-title">${esc(f.title)}</div>
+  <span class="prio-overdue-action ${cls}">${label}</span>
+</div>`;
+  }).join('')}
+</div>` : '';
+
+  document.getElementById('prio-body').innerHTML = s1 + s2 + s3 + s4 + s5;
+}
+
+function applyAiOrder() {
+  if (!priorityRec?.recommendation?.rankedTodos) return;
+  aiRankedIds = priorityRec.recommendation.rankedTodos.map(t => t.id);
+  sortKey = 'ai';
+  // Activate AI sort pill, deactivate others
+  document.getElementById('grp-sort').querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+  document.getElementById('pill-ai-sort').classList.add('active');
+  updateAiSortPill();
+  render();
+  closePrioModal();
+}
+
+function closePrioModal() { document.getElementById('prio-overlay').classList.remove('open'); }
+function prioOverlayClick(e) { if(e.target===document.getElementById('prio-overlay')) closePrioModal(); }
 
 load();
 </script>

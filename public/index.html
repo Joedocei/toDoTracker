@@ -954,6 +954,8 @@ function visible() {
     (t.tags||[]).some(g=>g.toLowerCase().includes(query))
   );
   list.sort((a,b)=>{
+    const aCmp=(a.status==='completed'?1:0), bCmp=(b.status==='completed'?1:0);
+    if (aCmp!==bCmp) return aCmp-bCmp;
     switch(sortKey){
       case 'priority': return (PRIORITY_ORDER[a.priority]??9)-(PRIORITY_ORDER[b.priority]??9);
       case 'status':   return (STATUS_ORDER[a.status]??9)-(STATUS_ORDER[b.status]??9);

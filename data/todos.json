@@ -7,7 +7,11 @@
     "effort": "S",
     "description": "Cut water and electric ASAP. Send copy of deed — hold until closer to listing.",
     "notes": "Water & electric cutoff initiated 4/3 — confirm it went through.",
-    "createdAt": "2026-04-09T00:00:00.000Z"
+    "createdAt": "2026-04-09T00:00:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Flip",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "102",
@@ -17,7 +21,11 @@
     "effort": "M",
     "description": "Buy stove, above-stove microwave, dishwasher, and fridge. Waiting on floors before fridge delivery.",
     "notes": "Target: by 4/15",
-    "createdAt": "2026-04-09T00:01:00.000Z"
+    "createdAt": "2026-04-09T00:01:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Flip",
+    "dueDate": "2026-04-15",
+    "moneyTier": "money-now"
   },
   {
     "id": "103",
@@ -27,7 +35,11 @@
     "effort": "S",
     "description": "Contact stagers and cleaners. Oni has contact info in thread.",
     "notes": "Target: by 4/10. Contacted local mentor for stager info — awaiting response.",
-    "createdAt": "2026-04-09T00:02:00.000Z"
+    "createdAt": "2026-04-09T00:02:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Flip",
+    "dueDate": "2026-04-10",
+    "moneyTier": "money-now"
   },
   {
     "id": "104",
@@ -37,7 +49,11 @@
     "effort": "S",
     "description": "Continue outreach calls on Capron property.",
     "notes": "",
-    "createdAt": "2026-04-09T00:03:00.000Z"
+    "createdAt": "2026-04-09T00:03:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "105",
@@ -47,7 +63,11 @@
     "effort": "M",
     "description": "Make more calls on Bronze property. Run FB and email marketing campaign.",
     "notes": "",
-    "createdAt": "2026-04-09T00:04:00.000Z"
+    "createdAt": "2026-04-09T00:04:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "106",
@@ -57,7 +77,11 @@
     "effort": "M",
     "description": "Make calls on Peachtree. Run FB and email marketing campaign.",
     "notes": "",
-    "createdAt": "2026-04-09T00:05:00.000Z"
+    "createdAt": "2026-04-09T00:05:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "107",
@@ -67,7 +91,11 @@
     "effort": "S",
     "description": "Daily 30-min block to underwrite deals sitting in email. Set a recurring calendar block.",
     "notes": "",
-    "createdAt": "2026-04-09T00:06:00.000Z"
+    "createdAt": "2026-04-09T00:06:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Operations",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "201",
@@ -77,7 +105,11 @@
     "effort": "M",
     "description": "Complete WTTA updates for J. Clark.",
     "notes": "Due 4/14",
-    "createdAt": "2026-04-09T00:07:00.000Z"
+    "createdAt": "2026-04-09T00:07:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Ventures",
+    "dueDate": "2026-04-14",
+    "moneyTier": "money-soon"
   },
   {
     "id": "202",
@@ -87,7 +119,11 @@
     "effort": "L",
     "description": "Build Bird's Eye prototype for J. Clark.",
     "notes": "Due 4/14",
-    "createdAt": "2026-04-09T00:08:00.000Z"
+    "createdAt": "2026-04-09T00:08:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Ventures",
+    "dueDate": "2026-04-14",
+    "moneyTier": "money-soon"
   },
   {
     "id": "203",
@@ -97,7 +133,11 @@
     "effort": "S",
     "description": "Make the call. Discuss surplus funds with Bruce — possible Diamond handoff.",
     "notes": "",
-    "createdAt": "2026-04-09T00:09:00.000Z"
+    "createdAt": "2026-04-09T00:09:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "SubTo",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "204",
@@ -107,7 +147,11 @@
     "effort": "M",
     "description": "Build a Google Sheet CRM to track deals and set follow-up reminders. Include SubTo follow-ups tab.",
     "notes": "",
-    "createdAt": "2026-04-09T00:10:00.000Z"
+    "createdAt": "2026-04-09T00:10:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Operations",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "301",
@@ -117,7 +161,11 @@
     "effort": "M",
     "description": "Deliver AI workflow documentation to Adrian at SubTo.",
     "notes": "Due 4/17",
-    "createdAt": "2026-04-09T00:11:00.000Z"
+    "createdAt": "2026-04-09T00:11:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "SubTo",
+    "dueDate": "2026-04-17",
+    "moneyTier": "money-soon"
   },
   {
     "id": "302",
@@ -127,7 +175,11 @@
     "effort": "M",
     "description": "Prepare for Get Creative Podcast appearance.",
     "notes": "Due 4/17",
-    "createdAt": "2026-04-09T00:12:00.000Z"
+    "createdAt": "2026-04-09T00:12:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "SubTo",
+    "dueDate": "2026-04-17",
+    "moneyTier": "money-soon"
   },
   {
     "id": "303",
@@ -137,7 +189,11 @@
     "effort": "S",
     "description": "Finalize Maris's school schedule.",
     "notes": "Due by 4/17",
-    "createdAt": "2026-04-09T00:13:00.000Z"
+    "createdAt": "2026-04-09T00:13:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Family",
+    "dueDate": "2026-04-17",
+    "moneyTier": "time-sensitive"
   },
   {
     "id": "304",
@@ -147,7 +203,11 @@
     "effort": "S",
     "description": "Write FB and email marketing copy for Capron, Bronze, and Peachtree using Claude/ChatGPT. Schedule via Buffer or Metricool.",
     "notes": "Est. ~1 hr",
-    "createdAt": "2026-04-09T00:14:00.000Z"
+    "createdAt": "2026-04-09T00:14:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "305",
@@ -157,7 +217,11 @@
     "effort": "S",
     "description": "Refresh buyers site copy using Claude.",
     "notes": "Est. ~30 min",
-    "createdAt": "2026-04-09T00:15:00.000Z"
+    "createdAt": "2026-04-09T00:15:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "306",
@@ -167,7 +231,11 @@
     "effort": "M",
     "description": "Set up a deal scraper using PhantomBuster or Apify (no-code). Target: Zillow, Redfin, Crexi, Discord, Facebook — long days on market, fixer-upper keywords (tlc, investor, as-is, etc.).",
     "notes": "Est. 2-3 hrs setup",
-    "createdAt": "2026-04-09T00:16:00.000Z"
+    "createdAt": "2026-04-09T00:16:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Operations",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "307",
@@ -177,7 +245,11 @@
     "effort": "S",
     "description": "Focused thinking session: identify the top 5 tasks I do now that AI can replace. Candidates: Zoom attendant, SubTo birddog finder, SubTo FB daily post, social media manager, scraper bot.",
     "notes": "Est. ~1 hr",
-    "createdAt": "2026-04-09T00:17:00.000Z"
+    "createdAt": "2026-04-09T00:17:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "SubTo",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "401",
@@ -187,7 +259,11 @@
     "effort": "S",
     "description": "Talk to Virginia and Kentucky Oxford Homes contacts. Explore lease-from-you model for their homes.",
     "notes": "",
-    "createdAt": "2026-04-09T00:18:00.000Z"
+    "createdAt": "2026-04-09T00:18:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Research",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "402",
@@ -197,7 +273,11 @@
     "effort": "S",
     "description": "One email to re-engage Padmission on Virginia and Kentucky needs. You have the relationship.",
     "notes": "",
-    "createdAt": "2026-04-09T00:19:00.000Z"
+    "createdAt": "2026-04-09T00:19:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Research",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "403",
@@ -207,7 +287,11 @@
     "effort": "M",
     "description": "Research Continuum of Care exit strategies: hospice housing, Mercy Center. 2hr block max, then make a go/no-go decision.",
     "notes": "",
-    "createdAt": "2026-04-09T00:20:00.000Z"
+    "createdAt": "2026-04-09T00:20:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Research",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "404",
@@ -217,7 +301,11 @@
     "effort": "M",
     "description": "Update personal website.",
     "notes": "",
-    "createdAt": "2026-04-09T00:21:00.000Z"
+    "createdAt": "2026-04-09T00:21:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Development",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "405",
@@ -285,7 +373,11 @@
         "title": "Add AI prioritize / rank / categorize features",
         "status": "not-started"
       }
-    ]
+    ],
+    "mainCategory": "Personal",
+    "subCategory": "Development",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "406",
@@ -295,7 +387,11 @@
     "effort": "S",
     "description": "Replace batteries in garage door opener and Camry key fob.",
     "notes": "",
-    "createdAt": "2026-04-09T00:23:00.000Z"
+    "createdAt": "2026-04-09T00:23:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Family",
+    "dueDate": null,
+    "moneyTier": "time-sensitive"
   },
   {
     "id": "407",
@@ -305,7 +401,11 @@
     "effort": "M",
     "description": "Dedicated session to brainstorm Left Main and Claude integration ideas for RvP.",
     "notes": "",
-    "createdAt": "2026-04-09T00:24:00.000Z"
+    "createdAt": "2026-04-09T00:24:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Operations",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "408",
@@ -315,7 +415,11 @@
     "effort": "L",
     "description": "Research how to automate the dispo process: create flyer, post on Facebook groups, schedule emails, update Carrot website. Also update buyers site.",
     "notes": "",
-    "createdAt": "2026-04-09T00:25:00.000Z"
+    "createdAt": "2026-04-09T00:25:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "409",
@@ -325,7 +429,11 @@
     "effort": "S",
     "description": "Set up a weekly review cadence: Man in the Arena speech + Clifton Strengths review.",
     "notes": "",
-    "createdAt": "2026-04-09T00:26:00.000Z"
+    "createdAt": "2026-04-09T00:26:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Development",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "410",
@@ -335,7 +443,11 @@
     "effort": "S",
     "description": "Move Verizon WiFi, Pest Control, and landing water bill autopayments from Bank of America to AMEX.",
     "notes": "",
-    "createdAt": "2026-04-09T00:27:00.000Z"
+    "createdAt": "2026-04-09T00:27:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Financial",
+    "dueDate": null,
+    "moneyTier": "time-sensitive"
   },
   {
     "id": "411",
@@ -345,7 +457,11 @@
     "effort": "M",
     "description": "Review repeated calendar tasks. Identify what to do more of, delegate, improve, or eliminate. Find the 20% that should only be mine.",
     "notes": "Strength matrix: good + enjoy (keep), good + don't enjoy (delegate), enjoy + not good (improve or delegate), not good + don't enjoy (eliminate).",
-    "createdAt": "2026-04-09T00:28:00.000Z"
+    "createdAt": "2026-04-09T00:28:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Development",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "412",
@@ -355,7 +471,11 @@
     "effort": "L",
     "description": "Explore and build out a Claude-powered website building side business.",
     "notes": "",
-    "createdAt": "2026-04-09T00:29:00.000Z"
+    "createdAt": "2026-04-09T00:29:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Ventures",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "413",
@@ -365,7 +485,11 @@
     "effort": "S",
     "description": "Organize or participate in a family volunteer event with Mt. Gilead.",
     "notes": "",
-    "createdAt": "2026-04-09T00:30:00.000Z"
+    "createdAt": "2026-04-09T00:30:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Family",
+    "dueDate": null,
+    "moneyTier": "time-sensitive"
   },
   {
     "id": "414",
@@ -375,7 +499,11 @@
     "effort": "S",
     "description": "Find a local venue to host SubTo meetups. Delegate search to someone local — you just approve. Align with: RV + mobile home parks, business buying, co-living, AI.",
     "notes": "Highlight local experts: Stacy, Ja'el, Mandy, Chelsea Westover, Bryan, Phil, Felicia, Mike Davis.",
-    "createdAt": "2026-04-09T00:31:00.000Z"
+    "createdAt": "2026-04-09T00:31:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "SubTo",
+    "dueDate": null,
+    "moneyTier": "money-soon"
   },
   {
     "id": "501",
@@ -385,7 +513,11 @@
     "effort": "S",
     "description": "Identify and connect with an InvestorLift partner to strengthen the dispo pipeline.",
     "notes": "",
-    "createdAt": "2026-04-09T00:32:00.000Z"
+    "createdAt": "2026-04-09T00:32:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "502",
@@ -395,7 +527,11 @@
     "effort": "S",
     "description": "Document and systematize the dispo outreach cadence.",
     "notes": "",
-    "createdAt": "2026-04-09T00:33:00.000Z"
+    "createdAt": "2026-04-09T00:33:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "503",
@@ -405,7 +541,11 @@
     "effort": "M",
     "description": "Run underwriting analysis on the rebuilt Lexington properties.",
     "notes": "",
-    "createdAt": "2026-04-09T00:34:00.000Z"
+    "createdAt": "2026-04-09T00:34:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Research",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "504",
@@ -415,7 +555,11 @@
     "effort": "M",
     "description": "Create a plan for the yellow properties.",
     "notes": "",
-    "createdAt": "2026-04-09T00:35:00.000Z"
+    "createdAt": "2026-04-09T00:35:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "Research",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "505",
@@ -425,7 +569,11 @@
     "effort": "M",
     "description": "Create a personal financial tracking system.",
     "notes": "",
-    "createdAt": "2026-04-09T00:36:00.000Z"
+    "createdAt": "2026-04-09T00:36:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Financial",
+    "dueDate": null,
+    "moneyTier": "time-sensitive"
   },
   {
     "id": "506",
@@ -435,7 +583,11 @@
     "effort": "L",
     "description": "Build a personal GPT knowledge base with relevant context, notes, and processes.",
     "notes": "",
-    "createdAt": "2026-04-09T00:37:00.000Z"
+    "createdAt": "2026-04-09T00:37:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Development",
+    "dueDate": null,
+    "moneyTier": "research"
   },
   {
     "id": "507",
@@ -445,7 +597,11 @@
     "effort": "M",
     "description": "Run a tax review using AI. Strip sensitive PII and financial data before uploading.",
     "notes": "",
-    "createdAt": "2026-04-09T00:38:00.000Z"
+    "createdAt": "2026-04-09T00:38:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Financial",
+    "dueDate": null,
+    "moneyTier": "time-sensitive"
   },
   {
     "id": "508",
@@ -455,7 +611,11 @@
     "effort": "S",
     "description": "Follow up with Seth and Oni on the RvP doc review.",
     "notes": "",
-    "createdAt": "2026-04-09T00:39:00.000Z"
+    "createdAt": "2026-04-09T00:39:00.000Z",
+    "mainCategory": "Real Estate",
+    "subCategory": "RvP Dispo",
+    "dueDate": null,
+    "moneyTier": "money-now"
   },
   {
     "id": "509",
@@ -465,6 +625,10 @@
     "effort": "S",
     "description": "Hand off FB and email marketing execution to a VA or team member. Write copy with AI first, then delegate.",
     "notes": "",
-    "createdAt": "2026-04-09T00:40:00.000Z"
+    "createdAt": "2026-04-09T00:40:00.000Z",
+    "mainCategory": "Personal",
+    "subCategory": "Development",
+    "dueDate": null,
+    "moneyTier": "research"
   }
 ]

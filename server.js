@@ -2,6 +2,12 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const Anthropic = require('@anthropic-ai/sdk');
+const {
+  buildPriorityContext,
+  buildRulesRecommendation,
+  PRIORITIZE_SYSTEM,
+  PRIORITIZE_TOOL,
+} = require('./lib/priorityEngine');
 
 const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
 
@@ -54,6 +60,11 @@ app.post('/api/todos', (req, res) => {
     dependencyNotes: (b.dependencyNotes || '').trim(),
     subTasks: Array.isArray(b.subTasks) ? b.subTasks : [],
     createdAt: new Date().toISOString(),
+    ...(b.moneyTier    != null && { moneyTier:    b.moneyTier }),
+    ...(b.dueDate      != null && { dueDate:      b.dueDate }),
+    ...(b.mainCategory != null && { mainCategory: b.mainCategory }),
+    ...(b.subCategory  != null && { subCategory:  b.subCategory }),
+    ...(b.aiAssist     != null && { aiAssist:     b.aiAssist }),
   };
   todos.push(todo);
   writeTodos(todos);
@@ -200,6 +211,65 @@ app.post('/api/ai/enrich', async (req, res) => {
   } catch (err) {
     console.error('AI enrich error:', err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ── AI Prioritize ─────────────────────────────────────────────────────────────
+// In-memory cache — survives modal re-opens without re-calling the API.
+// Cleared on server restart; UI "Refresh" button always POSTs for a fresh run.
+let priorityCache = null;
+
+app.get('/api/ai/prioritize', (req, res) => {
+  if (!priorityCache) return res.status(204).end();
+  res.json(priorityCache);
+});
+
+app.post('/api/ai/prioritize', async (req, res) => {
+  const { timeAvailable = null, userContext = null } = req.body || {};
+
+  try {
+    const context = buildPriorityContext(readTodos(), { timeAvailable, userContext });
+
+    let recommendation;
+    let source;
+
+    if (anthropic) {
+      try {
+        const response = await anthropic.messages.create({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 4096,
+          system: PRIORITIZE_SYSTEM,
+          tools: [PRIORITIZE_TOOL],
+          tool_choice: { type: 'tool', name: 'return_todo_prioritization' },
+          messages: [{ role: 'user', content: JSON.stringify(context) }],
+        });
+        const toolUse = response.content.find(c => c.type === 'tool_use');
+        if (!toolUse?.input?.nextTodo) throw new Error('AI returned an invalid prioritization payload.');
+        recommendation = toolUse.input;
+        source = 'anthropic';
+      } catch (aiErr) {
+        console.warn('AI prioritize failed, using rules fallback:', aiErr.message);
+        recommendation = buildRulesRecommendation(context);
+        source = 'rules-engine-fallback';
+      }
+    } else {
+      recommendation = buildRulesRecommendation(context);
+      source = 'rules-engine';
+    }
+
+    priorityCache = { source, context, recommendation, cachedAt: new Date().toISOString() };
+    res.json(priorityCache);
+  } catch (err) {
+    console.error('Prioritize error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/auth', (req, res) => {
+  if (req.body?.password === 'diamond') {
+    res.json({ ok: true });
+  } else {
+    res.status(401).json({ ok: false });
   }
 });
 

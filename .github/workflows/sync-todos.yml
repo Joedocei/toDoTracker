@@ -1,0 +1,29 @@
+name: Sync todos from Railway
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # daily at 6am UTC
+  workflow_dispatch:        # allow manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch todos from Railway
+        run: |
+          mkdir -p data
+          curl -sf "${{ vars.RAILWAY_URL }}/api/todos" > data/todos.json
+          echo "Fetched $(jq length data/todos.json) todos"
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/todos.json
+          git diff --cached --quiet && echo "No changes." || \
+            (git commit -m "sync: update todos from Railway [skip ci]" && git push)

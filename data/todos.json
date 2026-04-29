@@ -222,12 +222,70 @@
   {
     "id": "405",
     "title": "Develop personal tracker web app",
-    "status": "in-flight",
-    "priority": "Medium",
-    "effort": "M",
-    "description": "Build and deploy a personal online todo tracker accessible from phone and desktop.",
+    "status": "completed",
+    "priority": "Strong",
+    "effort": "XL",
+    "description": "Build and deploy a personal todo tracker accessible from phone and desktop. Fully shipped: rich todo fields, AI auto-fill via Claude API, sidebar filters, trash/restore, and Railway deployment with persistent volume storage.",
     "notes": "In progress — built with Node.js/Express. Deploy to Railway.app.",
-    "createdAt": "2026-04-09T00:22:00.000Z"
+    "createdAt": "2026-04-09T00:22:00.000Z",
+    "timeEstimate": "xl",
+    "tags": [
+      "web-app",
+      "node-js",
+      "railway",
+      "ai",
+      "personal-tools"
+    ],
+    "effortJustification": "Full-stack build from scratch — backend API, single-page UI, Railway deployment, AI integration, and multiple iteration cycles.",
+    "timeJustification": "Multiple sessions across several days covering design, build, deploy, debugging, and feature additions.",
+    "implementationNotes": "Node.js/Express backend, vanilla JS single-page frontend, JSON file storage on Railway Volume (DATA_FILE env var), Anthropic SDK for AI enrichment with batched parallel calls.",
+    "subTasks": [
+      {
+        "id": "sub-405-1",
+        "title": "Define feature requirements and UI wireframe",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-2",
+        "title": "Build Express API with JSON file persistence",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-3",
+        "title": "Build single-page UI with sidebar filter layout",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-4",
+        "title": "Deploy to Railway with persistent volume storage",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-5",
+        "title": "Add rich todo fields (tags, effort, subtasks, deps…)",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-6",
+        "title": "Add AI auto-fill via Claude API (batched)",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-7",
+        "title": "Add trash can with soft-delete and restore",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-8",
+        "title": "Add priority, effort, time, tag sidebar filters",
+        "status": "completed"
+      },
+      {
+        "id": "sub-405-9",
+        "title": "Add AI prioritize / rank / categorize features",
+        "status": "not-started"
+      }
+    ]
   },
   {
     "id": "406",

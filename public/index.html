@@ -1316,6 +1316,8 @@ async function toggleSubtask(todoId,subId) {
 }
 
 async function confirmDelete(id) {
+  const t=todos.find(x=>x.id===id);
+  if(!t||!confirm(`Move "${t.title}" to trash?`)) return;
   await apidelete(id);
 }
 

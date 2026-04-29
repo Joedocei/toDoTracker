@@ -11,9 +11,14 @@ const {
 } = require('../lib/priorityEngine');
 
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, '..', 'data', 'todos.json');
-const useAi = process.argv.includes('--ai');
-const limitArg = process.argv.find(arg => arg.startsWith('--limit='));
-const limit = limitArg ? Number(limitArg.split('=')[1]) : 12;
+
+const useAi       = process.argv.includes('--ai');
+const limitArg    = process.argv.find(a => a.startsWith('--limit='));
+const timeArg     = process.argv.find(a => a.startsWith('--time='));
+const contextArg  = process.argv.find(a => a.startsWith('--context='));
+const limit         = limitArg   ? Number(limitArg.split('=')[1])  : 12;
+const timeAvailable = timeArg    ? timeArg.split('=').slice(1).join('=')    : null;
+const userContext   = contextArg ? contextArg.split('=').slice(1).join('=') : null;
 
 function readTodos() {
   return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
@@ -35,7 +40,7 @@ async function askAi(context) {
 }
 
 (async () => {
-  const context = buildPriorityContext(readTodos(), { limit });
+  const context = buildPriorityContext(readTodos(), { limit, timeAvailable, userContext });
   const rulesRecommendation = buildRulesRecommendation(context);
 
   if (!useAi) {

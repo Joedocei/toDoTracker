@@ -1788,9 +1788,12 @@ async function cycleStatus(id,e) {
 
 async function toggleSubtask(todoId,subId) {
   const t=todos.find(x=>x.id===todoId); if(!t) return;
-  await apiupdate(todoId,{...t,subTasks:(t.subTasks||[]).map(s=>
+  const newSubs=(t.subTasks||[]).map(s=>
     s.id===subId?{...s,status:s.status==='completed'?'not-started':'completed'}:s
-  )});
+  );
+  const anyDone=newSubs.some(s=>s.status==='completed');
+  const newStatus=(anyDone&&t.status==='not-started')?'in-flight':t.status;
+  await apiupdate(todoId,{...t,subTasks:newSubs,status:newStatus});
 }
 
 async function confirmDelete(id) {

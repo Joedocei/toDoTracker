@@ -117,7 +117,10 @@ RULES:
     });
 
     const toolUse = response.content.find(c => c.type === 'tool_use');
-    if (!toolUse) return res.status(500).json({ error: 'No structured response from AI.' });
+    if (!toolUse || !Array.isArray(toolUse.input?.todos)) {
+      console.error('Unexpected AI response shape:', JSON.stringify(response.content));
+      return res.status(500).json({ error: 'AI returned an unexpected response format.' });
+    }
     res.json(toolUse.input.todos);
   } catch (err) {
     console.error('AI enrich error:', err.message);

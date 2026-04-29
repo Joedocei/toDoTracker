@@ -1246,10 +1246,13 @@ async function enrichWithAI() {
   btn.textContent = '✦ Analyzing…';
   try {
     const enriched = await req('POST', '/api/ai/enrich', {});
+    if (!Array.isArray(enriched)) throw new Error('Unexpected response format from server.');
     const changes = computeEnrichChanges(todos, enriched);
     showAIModal(changes);
   } catch(err) {
-    alert('AI enrichment failed:\n' + err.message);
+    let msg = err.message;
+    try { const j = JSON.parse(msg); if (j.error) msg = j.error; } catch {}
+    alert('AI enrichment failed:\n' + msg);
   } finally {
     btn.disabled = false;
     btn.textContent = '✦ Auto-fill';

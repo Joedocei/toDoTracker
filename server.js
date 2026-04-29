@@ -1,6 +1,8 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+const multer = require('multer');
 const Anthropic = require('@anthropic-ai/sdk');
 const {
   buildPriorityContext,
@@ -13,7 +15,16 @@ const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data', 'todos.json');
+const DATA_FILE   = process.env.DATA_FILE   || path.join(__dirname, 'data', 'todos.json');
+const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(path.dirname(DATA_FILE), 'uploads');
+
+const upload = multer({
+  limits: { fileSize: 25 * 1024 * 1024 },
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => { fs.mkdirSync(UPLOADS_DIR, { recursive: true }); cb(null, UPLOADS_DIR); },
+    filename:    (req, file, cb) => { cb(null, crypto.randomBytes(16).toString('hex') + path.extname(file.originalname)); },
+  }),
+});
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -263,6 +274,57 @@ app.post('/api/ai/prioritize', async (req, res) => {
     console.error('Prioritize error:', err.message);
     res.status(500).json({ error: err.message });
   }
+});
+
+// ── Attachments ──────────────────────────────────────────────────────────────
+app.post('/api/todos/:id/attachments', upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file provided' });
+  const todos = readTodos();
+  const idx = todos.findIndex(t => t.id === req.params.id && !t.deleted);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  const attachment = {
+    id:          crypto.randomBytes(8).toString('hex'),
+    name:        req.file.originalname,
+    size:        req.file.size,
+    type:        req.file.mimetype,
+    storedName:  req.file.filename,
+    uploadedAt:  new Date().toISOString(),
+  };
+  if (!Array.isArray(todos[idx].attachments)) todos[idx].attachments = [];
+  todos[idx].attachments.push(attachment);
+  writeTodos(todos);
+  res.status(201).json(attachment);
+});
+
+app.get('/api/attachments/:storedName', (req, res) => {
+  const storedName = path.basename(req.params.storedName);
+  const todos = readTodos();
+  let found = null;
+  for (const t of todos) {
+    found = (t.attachments || []).find(a => a.storedName === storedName);
+    if (found) break;
+  }
+  if (!found) return res.status(404).json({ error: 'Not found' });
+  const filePath = path.join(UPLOADS_DIR, storedName);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File missing' });
+  res.setHeader('Content-Disposition', `attachment; filename="${found.name.replace(/"/g, '')}"`);
+  res.sendFile(filePath);
+});
+
+app.delete('/api/todos/:id/attachments/:attachmentId', (req, res) => {
+  const todos = readTodos();
+  const idx = todos.findIndex(t => t.id === req.params.id && !t.deleted);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  const atts = todos[idx].attachments || [];
+  const aIdx = atts.findIndex(a => a.id === req.params.attachmentId);
+  if (aIdx === -1) return res.status(404).json({ error: 'Attachment not found' });
+  const { storedName } = atts[aIdx];
+  atts.splice(aIdx, 1);
+  todos[idx].attachments = atts;
+  writeTodos(todos);
+  const filePath = path.join(UPLOADS_DIR, storedName);
+  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  res.json({ ok: true });
 });
 
 app.post('/api/auth', (req, res) => {

@@ -408,6 +408,45 @@
     /* AI Opportunities star */
     .ds-title.star::before { content: "★ "; font-size: 0.65rem; }
 
+    /* ── Attachments ── */
+    .att-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+    .att-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 9px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .att-icon { font-size: 0.95rem; flex-shrink: 0; line-height: 1; }
+    .att-name { flex: 1; min-width: 0; font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .att-name a { color: var(--text); text-decoration: none; }
+    .att-name a:hover { text-decoration: underline; color: #2563eb; }
+    .att-size { font-size: 0.68rem; color: var(--text-faint); flex-shrink: 0; }
+    .att-del {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-faint); font-size: 1rem; line-height: 1;
+      flex-shrink: 0; padding: 0 2px; transition: color 0.1s;
+    }
+    .att-del:hover { color: #dc2626; }
+    .att-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: none;
+      border: 1.5px dashed var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .att-upload:hover { border-color: #aaa; color: var(--text); background: #f5f4f1; }
+    .att-upload.dragover { border-color: var(--accent); background: rgba(26,26,24,0.04); color: var(--text); }
+
     /* ── Modal ── */
     .overlay {
       position: fixed;
@@ -1569,10 +1608,7 @@ function render() {
     const isBlk=t.blockedBy&&t.blockedBy.length;
     const timeTxt=t.timeJustification||(t.timeEstimate?TIME_LABELS[t.timeEstimate]:'');
 
-    const hasDet=t.description||t.implementationNotes||t.notes||
-                 t.effortJustification||t.timeJustification||
-                 t.dependencyNotes||subs.length||
-                 (t.blockedBy&&t.blockedBy.length)||(t.benefitsFrom&&t.benefitsFrom.length);
+    const hasDet=true;
 
     const isAi  = todoAiAssist(t);
     const isLow = todoLowContext(t);
@@ -1658,6 +1694,27 @@ function render() {
       <div class="ds-title star">AI Opportunities</div>
       <div class="ds-text">${esc(t.notes)}</div>
     </div>`:''}
+
+    <div class="ds">
+      <div class="ds-title">Attachments</div>
+      ${(t.attachments&&t.attachments.length)?`
+      <div class="att-list">
+        ${t.attachments.map(a=>`
+        <div class="att-item">
+          <span class="att-icon">${fileIcon(a.type)}</span>
+          <span class="att-name"><a href="/api/attachments/${esc(a.storedName)}" target="_blank">${esc(a.name)}</a></span>
+          <span class="att-size">${fmtFileSize(a.size)}</span>
+          <button class="att-del" onclick="deleteAttachment('${t.id}','${a.id}',event)" title="Remove">×</button>
+        </div>`).join('')}
+      </div>`:''}
+      <label class="att-upload" id="att-label-${t.id}"
+             ondragover="attDragOver(event,'${t.id}')"
+             ondragleave="attDragLeave('${t.id}')"
+             ondrop="attDrop(event,'${t.id}')">
+        <input type="file" multiple style="display:none" onchange="uploadAttachments('${t.id}',this.files)">
+        + Attach file
+      </label>
+    </div>
   </div>`:''}
 </div>`;
   }).join('');
@@ -2100,6 +2157,64 @@ function applyAiOrder() {
 
 function closePrioModal() { document.getElementById('prio-overlay').classList.remove('open'); }
 function prioOverlayClick(e) { if(e.target===document.getElementById('prio-overlay')) closePrioModal(); }
+
+/* ── Attachments ── */
+function fileIcon(type) {
+  if (!type) return '📄';
+  if (type.startsWith('image/'))                              return '🖼';
+  if (type === 'application/pdf')                             return '📕';
+  if (type.includes('zip')||type.includes('tar')||type.includes('gzip')) return '📦';
+  if (type.startsWith('text/'))                               return '📝';
+  if (type.includes('word')||type.includes('document'))       return '📘';
+  if (type.includes('sheet')||type.includes('excel'))         return '📗';
+  return '📄';
+}
+
+function fmtFileSize(bytes) {
+  if (bytes < 1024)           return bytes + ' B';
+  if (bytes < 1024 * 1024)    return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+async function uploadAttachments(todoId, files) {
+  if (!files || !files.length) return;
+  for (const file of Array.from(files)) {
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const r = await fetch(`/api/todos/${todoId}/attachments`, { method: 'POST', body: fd });
+      if (!r.ok) throw new Error(await r.text());
+    } catch (e) {
+      alert(`Upload failed: ${e.message}`);
+      return;
+    }
+  }
+  try { todos = await req('GET', '/api/todos'); } catch { todos = []; }
+  openCards.add(todoId);
+  render();
+}
+
+async function deleteAttachment(todoId, attachmentId, e) {
+  e.stopPropagation();
+  const r = await fetch(`/api/todos/${todoId}/attachments/${attachmentId}`, { method: 'DELETE' });
+  if (!r.ok) { alert('Delete failed'); return; }
+  try { todos = await req('GET', '/api/todos'); } catch { todos = []; }
+  openCards.add(todoId);
+  render();
+}
+
+function attDragOver(e, todoId) {
+  e.preventDefault();
+  document.getElementById(`att-label-${todoId}`)?.classList.add('dragover');
+}
+function attDragLeave(todoId) {
+  document.getElementById(`att-label-${todoId}`)?.classList.remove('dragover');
+}
+function attDrop(e, todoId) {
+  e.preventDefault();
+  document.getElementById(`att-label-${todoId}`)?.classList.remove('dragover');
+  uploadAttachments(todoId, e.dataTransfer.files);
+}
 
 /* ── Login ── */
 async function submitLogin() {

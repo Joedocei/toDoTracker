@@ -26,6 +26,9 @@ function buildPayload(todos) {
     });
 }
 
+// alias used in batching tests
+const buildEnrichPayload = buildPayload;
+
 function mergePatch(allTodos, patches) {
   const patchById = new Map(patches.map(p => [p.id, p]));
   return allTodos.map(t => {
@@ -103,6 +106,39 @@ describe('mergePatch', () => {
     const result  = mergePatch(todos, patches);
     assert.equal(result[0].title, 'T');
     assert.equal(result[0].status, 'in-flight');
+  });
+});
+
+describe('batching', () => {
+  test('splits payload into correct batch sizes', () => {
+    const todos = Array.from({ length: 25 }, (_, i) => ({
+      id: String(i), title: `Todo ${i}`, tags: [], description: '',
+    }));
+    const payload = buildEnrichPayload(todos);
+    assert.equal(payload.length, 25);
+
+    const BATCH_SIZE = 10;
+    const batches = [];
+    for (let i = 0; i < payload.length; i += BATCH_SIZE) batches.push(payload.slice(i, i + BATCH_SIZE));
+    assert.equal(batches.length, 3);
+    assert.equal(batches[0].length, 10);
+    assert.equal(batches[1].length, 10);
+    assert.equal(batches[2].length, 5);
+  });
+
+  test('merges patches from multiple batches correctly', () => {
+    const todos = [
+      { id: '1', title: 'A', tags: [] },
+      { id: '2', title: 'B', tags: [] },
+      { id: '3', title: 'C', tags: [] },
+    ];
+    const batch1Patches = [{ id: '1', tags: ['x'] }];
+    const batch2Patches = [{ id: '2', tags: ['y'] }, { id: '3', tags: ['z'] }];
+    const allPatches = [...batch1Patches, ...batch2Patches];
+    const result = mergePatch(todos, allPatches);
+    assert.deepEqual(result[0].tags, ['x']);
+    assert.deepEqual(result[1].tags, ['y']);
+    assert.deepEqual(result[2].tags, ['z']);
   });
 });
 

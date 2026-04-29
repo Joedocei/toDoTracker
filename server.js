@@ -77,38 +77,7 @@ app.delete('/api/todos/:id', (req, res) => {
   res.json({ ok: true });
 });
 
-app.post('/api/ai/enrich', async (req, res) => {
-  if (!anthropic) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured on this server.' });
-  try {
-    const allTodos = readTodos();
-    if (!allTodos.length) return res.json([]);
-
-    const ENRICHABLE = ['description','implementationNotes','notes',
-      'effortJustification','timeJustification','tags','subTasks','timeEstimate'];
-
-    const isEmpty = v => v === '' || v === null || v === undefined || (Array.isArray(v) && !v.length);
-
-    // Only process todos that actually have empty fields
-    const toEnrich = allTodos.filter(t => ENRICHABLE.some(f => isEmpty(t[f])));
-    if (!toEnrich.length) return res.json(allTodos);
-
-    // Condensed payload: title + existing context + list of fields to fill
-    // This keeps input tokens small and output even smaller (Claude returns only filled fields)
-    const payload = toEnrich.map(t => {
-      const obj = { id: t.id, title: t.title };
-      if (t.description)                   obj.description = t.description;
-      if (t.priority && t.priority !== 'Medium') obj.priority = t.priority;
-      if (t.effort   && t.effort   !== 'M')      obj.effort  = t.effort;
-      if (t.timeEstimate)                  obj.timeEstimate = t.timeEstimate;
-      if (t.tags?.length)                  obj.tags = t.tags;
-      obj._fill = ENRICHABLE.filter(f => isEmpty(t[f]));
-      return obj;
-    });
-
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 8192,
-      system: `You are a project management assistant. Fill in the specified empty fields for each todo.
+const ENRICH_SYSTEM = `You are a project management assistant. Fill in the specified empty fields for each todo.
 
 Each todo has a "_fill" array listing exactly which fields need to be populated.
 Return ONLY those fields plus "id" — do not repeat fields that are not in "_fill".
@@ -120,37 +89,78 @@ Field rules:
 - effortJustification / timeJustification: one concise sentence explaining the estimate
 - tags: 1–5 lowercase hyphenated strings relevant to the task
 - timeEstimate: xs (<30 min) | s (30min–1hr) | m (1–4hrs) | l (4–16hrs) | xl (1+ days)
-- subTasks: [{id:"sub-N",title:"...",status:"not-started"}] — only for clearly multi-step tasks`,
-      tools: [{
-        name: 'return_enriched_fields',
-        description: 'Return only the newly filled fields for each todo (plus id)',
-        input_schema: {
-          type: 'object',
-          properties: {
-            todos: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: { id: { type: 'string' } },
-                required: ['id']
-              }
-            }
-          },
-          required: ['todos']
-        }
-      }],
-      tool_choice: { type: 'tool', name: 'return_enriched_fields' },
-      messages: [{ role: 'user', content: JSON.stringify(payload) }]
+- subTasks: [{id:"sub-N",title:"...",status:"not-started"}] — only for clearly multi-step tasks`;
+
+const ENRICH_TOOL = {
+  name: 'return_enriched_fields',
+  description: 'Return only the newly filled fields for each todo (plus id)',
+  input_schema: {
+    type: 'object',
+    properties: {
+      todos: {
+        type: 'array',
+        items: { type: 'object', properties: { id: { type: 'string' } }, required: ['id'] }
+      }
+    },
+    required: ['todos']
+  }
+};
+
+const ENRICHABLE = ['description','implementationNotes','notes',
+  'effortJustification','timeJustification','tags','subTasks','timeEstimate'];
+
+const isEmpty = v => v === '' || v === null || v === undefined || (Array.isArray(v) && !v.length);
+
+function buildEnrichPayload(todos) {
+  return todos
+    .filter(t => ENRICHABLE.some(f => isEmpty(t[f])))
+    .map(t => {
+      const obj = { id: t.id, title: t.title };
+      if (t.description)                         obj.description  = t.description;
+      if (t.priority && t.priority !== 'Medium') obj.priority     = t.priority;
+      if (t.effort   && t.effort   !== 'M')      obj.effort       = t.effort;
+      if (t.timeEstimate)                        obj.timeEstimate = t.timeEstimate;
+      if (t.tags?.length)                        obj.tags         = t.tags;
+      obj._fill = ENRICHABLE.filter(f => isEmpty(t[f]));
+      return obj;
     });
+}
 
-    const toolUse = response.content.find(c => c.type === 'tool_use');
-    if (!toolUse || !Array.isArray(toolUse.input?.todos)) {
-      console.error('Unexpected AI response shape:', JSON.stringify(response.content));
-      return res.status(500).json({ error: 'AI returned an unexpected response format.' });
+async function callEnrichBatch(batchPayload) {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 4096,
+    system: ENRICH_SYSTEM,
+    tools: [ENRICH_TOOL],
+    tool_choice: { type: 'tool', name: 'return_enriched_fields' },
+    messages: [{ role: 'user', content: JSON.stringify(batchPayload) }]
+  });
+  const toolUse = response.content.find(c => c.type === 'tool_use');
+  if (!toolUse || !Array.isArray(toolUse.input?.todos)) {
+    console.error(`Enrich batch failed. stop_reason=${response.stop_reason}`, JSON.stringify(response.content));
+    return [];
+  }
+  return toolUse.input.todos;
+}
+
+app.post('/api/ai/enrich', async (req, res) => {
+  if (!anthropic) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured on this server.' });
+  try {
+    const allTodos = readTodos();
+    if (!allTodos.length) return res.json([]);
+
+    const payload = buildEnrichPayload(allTodos);
+    if (!payload.length) return res.json(allTodos);
+
+    // Split into batches of 10 and run in parallel to stay within token limits
+    const BATCH_SIZE = 10;
+    const batches = [];
+    for (let i = 0; i < payload.length; i += BATCH_SIZE) {
+      batches.push(payload.slice(i, i + BATCH_SIZE));
     }
+    const patches = (await Promise.all(batches.map(callEnrichBatch))).flat();
 
-    // Merge the partial patches back into the full todos array
-    const patchById = new Map(toolUse.input.todos.map(p => [p.id, p]));
+    const patchById = new Map(patches.map(p => [p.id, p]));
     const merged = allTodos.map(t => {
       const patch = patchById.get(t.id);
       if (!patch) return t;

@@ -806,9 +806,87 @@
       .gr2 { grid-template-columns: 1fr; }
       .ds-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Login overlay ── */
+    #login-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #login-overlay.hidden { display: none; }
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px 32px;
+      width: 320px;
+      text-align: center;
+    }
+    .login-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .login-sub {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+    }
+    .login-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .login-input:focus { border-color: #aaa; }
+    .login-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 9px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s;
+    }
+    .login-btn:hover { opacity: 0.85; }
+    .login-error {
+      font-size: 0.75rem;
+      color: #dc2626;
+      margin-top: 10px;
+      min-height: 18px;
+    }
   </style>
 </head>
 <body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-title">Todo Tracker</div>
+    <div class="login-sub">Enter password to continue</div>
+    <input id="login-pw" class="login-input" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="login-btn" onclick="submitLogin()">Unlock</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
 
 <div class="layout">
 
@@ -2023,7 +2101,38 @@ function applyAiOrder() {
 function closePrioModal() { document.getElementById('prio-overlay').classList.remove('open'); }
 function prioOverlayClick(e) { if(e.target===document.getElementById('prio-overlay')) closePrioModal(); }
 
-load();
+/* ── Login ── */
+async function submitLogin() {
+  const pw = document.getElementById('login-pw').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  try {
+    const r = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw }),
+    });
+    if (r.ok) {
+      sessionStorage.setItem('auth', '1');
+      document.getElementById('login-overlay').classList.add('hidden');
+      load();
+    } else {
+      errEl.textContent = 'Incorrect password.';
+      document.getElementById('login-pw').select();
+    }
+  } catch {
+    errEl.textContent = 'Could not connect to server.';
+  }
+}
+
+document.getElementById('login-pw').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitLogin();
+});
+
+if (sessionStorage.getItem('auth') === '1') {
+  document.getElementById('login-overlay').classList.add('hidden');
+  load();
+}
 </script>
 </body>
 </html>

@@ -265,6 +265,14 @@ app.post('/api/ai/prioritize', async (req, res) => {
   }
 });
 
+app.post('/api/auth', (req, res) => {
+  if (req.body?.password === 'diamond') {
+    res.json({ ok: true });
+  } else {
+    res.status(401).json({ ok: false });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Todo tracker running on http://localhost:${PORT}`);
 });

@@ -663,6 +663,18 @@
     </div>
 
     <div class="fgroup">
+      <div class="fgroup-title">Priority</div>
+      <div class="pill-row" id="grp-priority">
+        <button class="pill active" onclick="setFilter('priority','',this)">All</button>
+        <button class="pill" onclick="setFilter('priority','Crucial',this)">Crucial</button>
+        <button class="pill" onclick="setFilter('priority','Very Strong',this)">Very Strong</button>
+        <button class="pill" onclick="setFilter('priority','Strong',this)">Strong</button>
+        <button class="pill" onclick="setFilter('priority','Medium',this)">Medium</button>
+        <button class="pill" onclick="setFilter('priority','Low',this)">Low</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
       <div class="fgroup-title">Effort</div>
       <div class="pill-row" id="grp-effort">
         <button class="pill active" onclick="setFilter('effort','',this)">All</button>
@@ -871,6 +883,7 @@ const TIME_LABELS    = { xs:'< 30 min',s:'30m–1hr',m:'1–4 hrs',l:'4–16 hrs
 
 let todos       = [];
 let fStatus     = 'all';
+let fPriority   = '';
 let fEffort     = '';
 let fTime       = '';
 let fTag        = '';
@@ -908,9 +921,10 @@ function activePill(groupId, btn) {
   btn.classList.add('active');
 }
 function setFilter(type, val, btn) {
-  if (type==='status') { fStatus=val; activePill('grp-status',btn); }
-  if (type==='effort') { fEffort=val; activePill('grp-effort',btn); }
-  if (type==='time')   { fTime=val;   activePill('grp-time',btn); }
+  if (type==='status')   { fStatus=val;   activePill('grp-status',btn); }
+  if (type==='priority') { fPriority=val; activePill('grp-priority',btn); }
+  if (type==='effort')   { fEffort=val;   activePill('grp-effort',btn); }
+  if (type==='time')     { fTime=val;     activePill('grp-time',btn); }
   render();
 }
 function setTagFilter(tag, btn) {
@@ -927,6 +941,7 @@ function schedSearch(v) {
 
 function visible() {
   let list = fStatus==='all' ? [...todos] : todos.filter(t=>t.status===fStatus);
+  if (fPriority) list=list.filter(t=>t.priority===fPriority);
   if (fEffort) list=list.filter(t=>t.effort===fEffort);
   if (fTime)   list=list.filter(t=>t.timeEstimate===fTime);
   if (fTag)    list=list.filter(t=>(t.tags||[]).includes(fTag));

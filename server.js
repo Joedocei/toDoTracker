@@ -80,40 +80,67 @@ app.delete('/api/todos/:id', (req, res) => {
 app.post('/api/ai/enrich', async (req, res) => {
   if (!anthropic) return res.status(503).json({ error: 'ANTHROPIC_API_KEY is not configured on this server.' });
   try {
-    const todos = readTodos();
-    if (!todos.length) return res.json([]);
+    const allTodos = readTodos();
+    if (!allTodos.length) return res.json([]);
+
+    const ENRICHABLE = ['description','implementationNotes','notes',
+      'effortJustification','timeJustification','tags','subTasks','timeEstimate'];
+
+    const isEmpty = v => v === '' || v === null || v === undefined || (Array.isArray(v) && !v.length);
+
+    // Only process todos that actually have empty fields
+    const toEnrich = allTodos.filter(t => ENRICHABLE.some(f => isEmpty(t[f])));
+    if (!toEnrich.length) return res.json(allTodos);
+
+    // Condensed payload: title + existing context + list of fields to fill
+    // This keeps input tokens small and output even smaller (Claude returns only filled fields)
+    const payload = toEnrich.map(t => {
+      const obj = { id: t.id, title: t.title };
+      if (t.description)                   obj.description = t.description;
+      if (t.priority && t.priority !== 'Medium') obj.priority = t.priority;
+      if (t.effort   && t.effort   !== 'M')      obj.effort  = t.effort;
+      if (t.timeEstimate)                  obj.timeEstimate = t.timeEstimate;
+      if (t.tags?.length)                  obj.tags = t.tags;
+      obj._fill = ENRICHABLE.filter(f => isEmpty(t[f]));
+      return obj;
+    });
 
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 8192,
-      system: `You are a project management assistant. Fill in empty fields on todo tasks using the task title and any existing context as your guide.
+      system: `You are a project management assistant. Fill in the specified empty fields for each todo.
 
-RULES:
-- Only fill fields that are empty: empty string "" or empty array []
-- NEVER change: id, title, status, createdAt, blockedBy, benefitsFrom
-- priority default is "Medium" — only change if the title strongly implies different urgency
-- effort default is "M" — only change if the scale is clearly wrong
-- Keep all existing non-empty values exactly as-is
-- Valid priority values: Crucial, Very Strong, Strong, Medium, Low
-- Valid effort values: XS, S, M, L, XL
-- Valid timeEstimate values: xs (<30 min), s (30min–1hr), m (1–4hrs), l (4–16hrs), xl (1+ days)
-- tags: 1–5 lowercase single-word or hyphenated strings
-- subTasks: 2–5 concrete steps only if the task warrants them; format { "id": "sub-0", "title": "...", "status": "not-started" }
+Each todo has a "_fill" array listing exactly which fields need to be populated.
+Return ONLY those fields plus "id" — do not repeat fields that are not in "_fill".
+
+Field rules:
 - description: 1–3 sentences on what needs to be done and why
-- implementationNotes: brief technical approach (omit if non-technical)
+- implementationNotes: brief technical approach; omit for non-technical tasks
 - notes: AI/automation opportunities for this task
-- effortJustification / timeJustification: one sentence explaining the estimate`,
+- effortJustification / timeJustification: one concise sentence explaining the estimate
+- tags: 1–5 lowercase hyphenated strings relevant to the task
+- timeEstimate: xs (<30 min) | s (30min–1hr) | m (1–4hrs) | l (4–16hrs) | xl (1+ days)
+- subTasks: [{id:"sub-N",title:"...",status:"not-started"}] — only for clearly multi-step tasks`,
       tools: [{
-        name: 'return_enriched_todos',
-        description: 'Return the todos array with empty fields filled in',
+        name: 'return_enriched_fields',
+        description: 'Return only the newly filled fields for each todo (plus id)',
         input_schema: {
           type: 'object',
-          properties: { todos: { type: 'array', items: { type: 'object' } } },
+          properties: {
+            todos: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: { id: { type: 'string' } },
+                required: ['id']
+              }
+            }
+          },
           required: ['todos']
         }
       }],
-      tool_choice: { type: 'tool', name: 'return_enriched_todos' },
-      messages: [{ role: 'user', content: JSON.stringify(todos) }]
+      tool_choice: { type: 'tool', name: 'return_enriched_fields' },
+      messages: [{ role: 'user', content: JSON.stringify(payload) }]
     });
 
     const toolUse = response.content.find(c => c.type === 'tool_use');
@@ -121,7 +148,17 @@ RULES:
       console.error('Unexpected AI response shape:', JSON.stringify(response.content));
       return res.status(500).json({ error: 'AI returned an unexpected response format.' });
     }
-    res.json(toolUse.input.todos);
+
+    // Merge the partial patches back into the full todos array
+    const patchById = new Map(toolUse.input.todos.map(p => [p.id, p]));
+    const merged = allTodos.map(t => {
+      const patch = patchById.get(t.id);
+      if (!patch) return t;
+      const { id: _id, _fill: _f, ...fields } = patch;
+      return { ...t, ...fields };
+    });
+
+    res.json(merged);
   } catch (err) {
     console.error('AI enrich error:', err.message);
     res.status(500).json({ error: err.message });

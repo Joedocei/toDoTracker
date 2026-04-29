@@ -430,6 +430,27 @@
     .stitem.drop-before  { box-shadow: 0 -2px 0 0 #2563eb; }
     .stitem.drop-after   { box-shadow: 0  2px 0 0 #2563eb; }
 
+    /* ── Inline notes ── */
+    .card-notes {
+      width: 100%;
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 5px 7px;
+      font-size: 0.83rem;
+      color: #444;
+      line-height: 1.65;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 58px;
+      transition: border-color 0.15s, background 0.15s;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .card-notes:hover { border-color: var(--border); }
+    .card-notes:focus { border-color: #aaa; background: var(--surface2); }
+    .card-notes::placeholder { color: var(--text-faint); font-style: italic; }
+
     /* ── Attachments ── */
     .att-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
     .att-item {
@@ -1177,7 +1198,11 @@
           <textarea id="f-implementationNotes" placeholder="Technical approach, how to implement…"></textarea>
         </div>
         <div class="fg">
-          <label>AI Opportunities / Notes</label>
+          <label>Notes</label>
+          <textarea id="f-userNotes" placeholder="Personal notes, reminders, links…"></textarea>
+        </div>
+        <div class="fg">
+          <label>AI Opportunities</label>
           <textarea id="f-notes" placeholder="Context, side opportunities, AI usage notes…"></textarea>
         </div>
       </div>
@@ -1542,6 +1567,7 @@ function visible() {
     t.title.toLowerCase().includes(query)||
     (t.description||'').toLowerCase().includes(query)||
     (t.notes||'').toLowerCase().includes(query)||
+    (t.userNotes||'').toLowerCase().includes(query)||
     (t.implementationNotes||'').toLowerCase().includes(query)||
     (t.tags||[]).some(g=>g.toLowerCase().includes(query))
   );
@@ -1734,6 +1760,15 @@ function render() {
     </div>`:''}
 
     <div class="ds">
+      <div class="ds-title">Notes</div>
+      <textarea class="card-notes" id="notes-${t.id}"
+        placeholder="Add a note…"
+        oninput="schedNotesSave('${t.id}',this)"
+        onclick="event.stopPropagation()"
+      >${esc(t.userNotes||'')}</textarea>
+    </div>
+
+    <div class="ds">
       <div class="ds-title">Attachments</div>
       ${(t.attachments&&t.attachments.length)?`
       <div class="att-list">
@@ -1760,11 +1795,16 @@ function render() {
 
   saveFilterState();
 
-  // Restore expanded state after DOM rebuild
+  // Restore expanded state and in-progress notes after DOM rebuild
   openCards.forEach(id => {
     const det = document.getElementById(`det-${id}`);
     const btn = document.getElementById(`xb-${id}`);
     if (det) det.classList.add('open');
+    const notesEl = document.getElementById(`notes-${id}`);
+    if (notesEl && _noteTimers[id]) {
+      const todo = todos.find(t => t.id === id);
+      if (todo) notesEl.value = todo.userNotes || '';
+    }
     if (btn) btn.textContent = '▲';
   });
 }
@@ -1863,6 +1903,7 @@ function openModal(id){
   document.getElementById('f-timeEstimate').value        =t?.timeEstimate||'';
   document.getElementById('f-description').value         =t?.description||'';
   document.getElementById('f-implementationNotes').value =t?.implementationNotes||'';
+  document.getElementById('f-userNotes').value           =t?.userNotes||'';
   document.getElementById('f-notes').value               =t?.notes||'';
   document.getElementById('f-effortJustification').value =t?.effortJustification||'';
   document.getElementById('f-timeJustification').value   =t?.timeJustification||'';
@@ -1897,6 +1938,7 @@ async function submitForm(){
     timeEstimate:        document.getElementById('f-timeEstimate').value,
     description:         document.getElementById('f-description').value.trim(),
     implementationNotes: document.getElementById('f-implementationNotes').value.trim(),
+    userNotes:           document.getElementById('f-userNotes').value.trim(),
     notes:               document.getElementById('f-notes').value.trim(),
     effortJustification: document.getElementById('f-effortJustification').value.trim(),
     timeJustification:   document.getElementById('f-timeJustification').value.trim(),
@@ -2199,6 +2241,20 @@ function applyAiOrder() {
 
 function closePrioModal() { document.getElementById('prio-overlay').classList.remove('open'); }
 function prioOverlayClick(e) { if(e.target===document.getElementById('prio-overlay')) closePrioModal(); }
+
+/* ── Inline notes ── */
+const _noteTimers = {};
+function schedNotesSave(todoId, el) {
+  clearTimeout(_noteTimers[todoId]);
+  _noteTimers[todoId] = setTimeout(async () => {
+    const todo = todos.find(t => t.id === todoId);
+    if (!todo) return;
+    const val = el.value;
+    if ((todo.userNotes || '') === val) return;
+    todo.userNotes = val; // optimistic local update
+    await req('PUT', `/api/todos/${todoId}`, { ...todo, userNotes: val });
+  }, 600);
+}
 
 /* ── Drag & drop reorder ── */
 let _dragCardId = null, _dragOverCardId = null, _dragCardPos = null;

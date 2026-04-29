@@ -892,6 +892,7 @@ let query       = '';
 let editId      = null;
 let searchTmr   = null;
 let curTags     = [];
+const openCards = new Set();
 
 /* ── API ── */
 async function req(method, url, body) {
@@ -1010,6 +1011,10 @@ function render() {
     return;
   }
 
+  // Remove open-card ids that no longer exist in the filtered list
+  const visibleIds = new Set(list.map(t => t.id));
+  for (const id of openCards) { if (!visibleIds.has(id)) openCards.delete(id); }
+
   el.innerHTML=list.map((t,idx)=>{
     const tags=t.tags||[];
     const subs=t.subTasks||[];
@@ -1105,6 +1110,14 @@ function render() {
   </div>`:''}
 </div>`;
   }).join('');
+
+  // Restore expanded state after DOM rebuild
+  openCards.forEach(id => {
+    const det = document.getElementById(`det-${id}`);
+    const btn = document.getElementById(`xb-${id}`);
+    if (det) det.classList.add('open');
+    if (btn) btn.textContent = '▲';
+  });
 }
 
 function toggleDetail(id) {
@@ -1113,6 +1126,7 @@ function toggleDetail(id) {
   if (!det) return;
   const open=det.classList.toggle('open');
   if (btn) btn.textContent=open?'▲':'▼';
+  if (open) openCards.add(id); else openCards.delete(id);
 }
 
 async function cycleStatus(id,e) {

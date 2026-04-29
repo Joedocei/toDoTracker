@@ -60,6 +60,11 @@ app.post('/api/todos', (req, res) => {
     dependencyNotes: (b.dependencyNotes || '').trim(),
     subTasks: Array.isArray(b.subTasks) ? b.subTasks : [],
     createdAt: new Date().toISOString(),
+    ...(b.moneyTier    != null && { moneyTier:    b.moneyTier }),
+    ...(b.dueDate      != null && { dueDate:      b.dueDate }),
+    ...(b.mainCategory != null && { mainCategory: b.mainCategory }),
+    ...(b.subCategory  != null && { subCategory:  b.subCategory }),
+    ...(b.aiAssist     != null && { aiAssist:     b.aiAssist }),
   };
   todos.push(todo);
   writeTodos(todos);

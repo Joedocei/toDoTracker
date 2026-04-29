@@ -100,6 +100,12 @@ describe('priorityEngine', () => {
     assert.equal(cat.sub,  'Financial');
   });
 
+  test('explicit mainCategory/subCategory overrides regex inference', () => {
+    const cat = inferCategory({ title: 'Dupuy Flip — cut utilities', mainCategory: 'LTD', subCategory: null });
+    assert.equal(cat.main, 'LTD');
+    assert.equal(cat.sub,  null);
+  });
+
   // ── Money-tier inference ─────────────────────────────────────────────────────
   test('flip and dispo categories infer money-now', () => {
     assert.equal(inferMoneyTier({}, { main: 'Real Estate', sub: 'Flip' }),     'money-now');

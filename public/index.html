@@ -985,6 +985,35 @@
           </select>
         </div>
       </div>
+      <div class="gr4" style="margin-top:8px">
+        <div class="fg">
+          <label>Money Tier</label>
+          <select id="f-moneyTier">
+            <option value="">— Engine infers —</option>
+            <option value="money-now">Money Now</option>
+            <option value="money-soon">Money Soon</option>
+            <option value="time-sensitive">Time Sensitive</option>
+            <option value="research">Research</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Due Date</label>
+          <input id="f-dueDate" type="date">
+        </div>
+        <div class="fg">
+          <label>Main Category</label>
+          <input id="f-mainCategory" type="text" placeholder="Engine infers…">
+        </div>
+        <div class="fg">
+          <label>Sub-Category</label>
+          <input id="f-subCategory" type="text" placeholder="Engine infers…">
+        </div>
+      </div>
+      <div class="fg" style="flex-direction:row;align-items:center;gap:8px;margin-top:4px">
+        <input id="f-aiAssist" type="checkbox" style="width:auto;margin:0">
+        <label for="f-aiAssist" style="text-transform:none;letter-spacing:0;font-size:0.82rem;font-weight:500;cursor:pointer">⚡ AI can do this</label>
+      </div>
+
       <div class="fg">
         <label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(Enter or comma to add)</span></label>
         <div class="tchip-wrap" id="tchip-wrap" onclick="document.getElementById('f-tinput').focus()">
@@ -1660,6 +1689,11 @@ function openModal(id){
   document.getElementById('f-notes').value               =t?.notes||'';
   document.getElementById('f-effortJustification').value =t?.effortJustification||'';
   document.getElementById('f-timeJustification').value   =t?.timeJustification||'';
+  document.getElementById('f-moneyTier').value           =t?.moneyTier||'';
+  document.getElementById('f-dueDate').value             =t?.dueDate||'';
+  document.getElementById('f-mainCategory').value        =t?.mainCategory||'';
+  document.getElementById('f-subCategory').value         =t?.subCategory||'';
+  document.getElementById('f-aiAssist').checked          =t?.aiAssist===true;
   document.getElementById('f-blockedBy').value           =(t?.blockedBy||[]).join(', ');
   document.getElementById('f-benefitsFrom').value        =(t?.benefitsFrom||[]).join(', ');
   document.getElementById('f-dependencyNotes').value     =t?.dependencyNotes||'';
@@ -1690,6 +1724,11 @@ async function submitForm(){
     effortJustification: document.getElementById('f-effortJustification').value.trim(),
     timeJustification:   document.getElementById('f-timeJustification').value.trim(),
     tags:                [...curTags],
+    moneyTier:           document.getElementById('f-moneyTier').value || null,
+    dueDate:             document.getElementById('f-dueDate').value   || null,
+    mainCategory:        document.getElementById('f-mainCategory').value.trim() || null,
+    subCategory:         document.getElementById('f-subCategory').value.trim()  || null,
+    aiAssist:            document.getElementById('f-aiAssist').checked || undefined,
     blockedBy:           parseIds(document.getElementById('f-blockedBy').value),
     benefitsFrom:        parseIds(document.getElementById('f-benefitsFrom').value),
     dependencyNotes:     document.getElementById('f-dependencyNotes').value.trim(),

@@ -93,6 +93,8 @@
     #sn-inflight   { color: var(--c-inflight); }
     #sn-completed  { color: var(--c-completed); }
     #sn-trash      { color: #dc2626; }
+    .stat-box-clickable { cursor: pointer; transition: background 0.1s, border-color 0.1s; }
+    .stat-box-clickable:hover { background: #eeede9; border-color: #d0cec9; }
     .stat-box-trash:hover { background: rgba(220,38,38,0.06); border-color: rgba(220,38,38,0.2); }
 
     /* Filter groups */
@@ -696,19 +698,19 @@
     <div class="app-date" id="app-date">—</div>
 
     <div class="stats-grid">
-      <div class="stat-box">
+      <div class="stat-box stat-box-clickable" onclick="clickStatTile('all')" title="Show all">
         <span class="stat-num" id="sn-total">—</span>
         <span class="stat-lbl">Total</span>
       </div>
-      <div class="stat-box">
+      <div class="stat-box stat-box-clickable" onclick="clickStatTile('not-started')" title="Show not started">
         <span class="stat-num" id="sn-notstarted">—</span>
         <span class="stat-lbl">Not Started</span>
       </div>
-      <div class="stat-box">
+      <div class="stat-box stat-box-clickable" onclick="clickStatTile('in-flight')" title="Show in flight">
         <span class="stat-num" id="sn-inflight">—</span>
         <span class="stat-lbl">In Flight</span>
       </div>
-      <div class="stat-box">
+      <div class="stat-box stat-box-clickable" onclick="clickStatTile('completed')" title="Show completed">
         <span class="stat-num" id="sn-completed">—</span>
         <span class="stat-lbl">Completed</span>
       </div>
@@ -1091,6 +1093,14 @@ function activePill(groupId, btn) {
   document.getElementById(groupId).querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
+function clickStatTile(status) {
+  const grp = document.getElementById('grp-status');
+  const btn = [...grp.querySelectorAll('.pill')].find(b =>
+    b.getAttribute('onclick').includes(`'${status}'`)
+  );
+  if (btn) setFilter('status', status, btn);
+}
+
 function setFilter(type, val, btn) {
   if (type==='status')   { fStatus=val;   activePill('grp-status',btn); }
   if (type==='priority') { fPriority=val; activePill('grp-priority',btn); }

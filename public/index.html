@@ -213,7 +213,6 @@
       padding: 12px 13px 11px;
       gap: 0;
       cursor: pointer;
-      user-select: none;
     }
     .card-num {
       width: 26px;
@@ -1303,6 +1302,7 @@ function render() {
 }
 
 function toggleDetail(id) {
+  if (window.getSelection().toString().length) return;
   const det=document.getElementById(`det-${id}`);
   const btn=document.getElementById(`xb-${id}`);
   if (!det) return;

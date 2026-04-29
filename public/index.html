@@ -408,6 +408,23 @@
     /* AI Opportunities star */
     .ds-title.star::before { content: "★ "; font-size: 0.65rem; }
 
+    /* ── Move buttons ── */
+    .move-btns { display: inline-flex; flex-direction: column; gap: 1px; margin-right: 2px; }
+    .move-btn {
+      background: none; border: 1px solid var(--border); border-radius: 3px;
+      color: var(--text-faint); font-size: 0.55rem; line-height: 1;
+      width: 16px; height: 14px; cursor: pointer; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.1s;
+    }
+    .move-btn:hover { background: #e8e6e1; border-color: #bbb; color: var(--text); }
+    .st-move-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-faint); font-size: 0.65rem; line-height: 1;
+      padding: 0 2px; transition: color 0.1s; flex-shrink: 0;
+    }
+    .st-move-btn:hover { color: var(--text); }
+
     /* ── Attachments ── */
     .att-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
     .att-item {
@@ -1025,6 +1042,7 @@
         <button class="pill" onclick="setSort('effort',this)">By Effort</button>
         <button class="pill" onclick="setSort('status',this)">By Status</button>
         <button class="pill" onclick="setSort('newest',this)">Newest</button>
+        <button class="pill" onclick="setSort('custom',this)">My Order</button>
         <button class="pill" id="pill-ai-sort" onclick="setAiSort(this)" style="opacity:0.38;cursor:not-allowed">✦ AI Order</button>
       </div>
     </div>
@@ -1306,7 +1324,7 @@ function saveFilterState() {
   try {
     localStorage.setItem('tf', JSON.stringify({
       fStatus, fPriority, fEffort, fTime, fTag,
-      sortKey: sortKey === 'ai' ? 'priority' : sortKey, // AI order is ephemeral
+      sortKey: sortKey === 'ai' ? 'priority' : sortKey,
       query,
     }));
   } catch {}
@@ -1539,6 +1557,7 @@ function visible() {
         }
         return (PRIORITY_ORDER[a.priority]??9)-(PRIORITY_ORDER[b.priority]??9);
       }
+      case 'custom': return 0; // preserve stored array order
       default: return 0;
     }
   });
@@ -1631,6 +1650,7 @@ function render() {
           ${isBlk?'<span class="badge" style="background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.2)">⛔ blocked</span>':''}
           ${isAi?'<span class="badge b-ai" title="This task can largely be done by AI">⚡ AI</span>':''}
           ${isLow?'<span class="badge b-ctx" title="Add more context so the priority engine can rank this accurately">! context</span>':''}
+          ${sortKey==='custom'?`<span class="move-btns"><button class="move-btn" onclick="moveTodo('${t.id}','up',event)" title="Move up">▲</button><button class="move-btn" onclick="moveTodo('${t.id}','down',event)" title="Move down">▼</button></span>`:''}
           <button class="abtn" onclick="openModal('${t.id}')" title="Edit">✎</button>
           <button class="abtn del" onclick="confirmDelete('${t.id}')" title="Delete">✕</button>
           ${hasDet?`<button class="xbtn" id="xb-${t.id}">▼</button>`:''}
@@ -1670,7 +1690,7 @@ function render() {
     ${subs.length?`<div class="ds">
       <div class="ds-title">Sub-Tasks</div>
       <ul class="stlist">
-        ${subs.map(s=>`<li class="stitem">
+        ${subs.map((s,si)=>`<li class="stitem">
           <div class="stbox ${s.status==='completed'?'completed':s.status==='in-flight'?'inflight':''}"
                onclick="toggleSubtask('${t.id}','${s.id}')">
             <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
@@ -1678,6 +1698,8 @@ function render() {
             </svg>
           </div>
           <span class="sttext${s.status==='completed'?' done':''}">${esc(s.title)}</span>
+          <button class="st-move-btn" onclick="moveSubtask('${t.id}','${s.id}','up',event)" title="Move up" ${si===0?'style="opacity:0.25;cursor:default"':''}>▲</button>
+          <button class="st-move-btn" onclick="moveSubtask('${t.id}','${s.id}','down',event)" title="Move down" ${si===subs.length-1?'style="opacity:0.25;cursor:default"':''}>▼</button>
         </li>`).join('')}
       </ul>
     </div>`:''}
@@ -2163,6 +2185,29 @@ function applyAiOrder() {
 
 function closePrioModal() { document.getElementById('prio-overlay').classList.remove('open'); }
 function prioOverlayClick(e) { if(e.target===document.getElementById('prio-overlay')) closePrioModal(); }
+
+/* ── Reorder ── */
+async function moveTodo(id, dir, e) {
+  e.stopPropagation();
+  await req('POST', `/api/todos/${id}/move`, { direction: dir });
+  try { todos = await req('GET', '/api/todos'); } catch { todos = []; }
+  render();
+}
+
+async function moveSubtask(todoId, subId, dir, e) {
+  e.stopPropagation();
+  const todo = todos.find(t => t.id === todoId);
+  if (!todo) return;
+  const subs = [...(todo.subTasks || [])];
+  const idx = subs.findIndex(s => s.id === subId);
+  const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= subs.length) return;
+  [subs[idx], subs[swapIdx]] = [subs[swapIdx], subs[idx]];
+  await req('PUT', `/api/todos/${todoId}`, { ...todo, subTasks: subs });
+  try { todos = await req('GET', '/api/todos'); } catch { todos = []; }
+  openCards.add(todoId);
+  render();
+}
 
 /* ── Attachments ── */
 function fileIcon(type) {

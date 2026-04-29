@@ -276,6 +276,23 @@ app.post('/api/ai/prioritize', async (req, res) => {
   }
 });
 
+// ── Reorder ───────────────────────────────────────────────────────────────────
+app.post('/api/todos/:id/move', (req, res) => {
+  const { direction } = req.body;
+  if (direction !== 'up' && direction !== 'down') return res.status(400).json({ error: 'direction must be up or down' });
+  const todos = readTodos();
+  const active = todos.filter(t => !t.deleted);
+  const idx = active.findIndex(t => t.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= active.length) return res.json({ ok: true });
+  const fi = todos.indexOf(active[idx]);
+  const fj = todos.indexOf(active[swapIdx]);
+  [todos[fi], todos[fj]] = [todos[fj], todos[fi]];
+  writeTodos(todos);
+  res.json({ ok: true });
+});
+
 // ── Attachments ──────────────────────────────────────────────────────────────
 app.post('/api/todos/:id/attachments', upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file provided' });

@@ -92,6 +92,8 @@
     #sn-notstarted { color: var(--c-notstarted); }
     #sn-inflight   { color: var(--c-inflight); }
     #sn-completed  { color: var(--c-completed); }
+    #sn-trash      { color: #dc2626; }
+    .stat-box-trash:hover { background: rgba(220,38,38,0.06); border-color: rgba(220,38,38,0.2); }
 
     /* Filter groups */
     .fgroup { margin-bottom: 14px; }
@@ -710,6 +712,11 @@
         <span class="stat-num" id="sn-completed">—</span>
         <span class="stat-lbl">Completed</span>
       </div>
+      <div class="stat-box stat-box-trash" onclick="openTrash()" title="Open Trash" style="grid-column:1/-1;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 10px;text-align:left">
+        <span style="font-size:0.9rem">🗑</span>
+        <span class="stat-num" id="sn-trash" style="font-size:1.1rem">—</span>
+        <span class="stat-lbl" style="text-align:left">In Trash</span>
+      </div>
     </div>
 
     <div class="fgroup">
@@ -989,8 +996,9 @@ async function load() {
 async function refreshTrashBadge() {
   try {
     const items = await req('GET', '/api/trash');
-    const btn = document.getElementById('btn-trash');
-    btn.textContent = items.length ? `🗑 Trash (${items.length})` : '🗑 Trash';
+    const n = items.length;
+    document.getElementById('btn-trash').textContent = n ? `🗑 Trash (${n})` : '🗑 Trash';
+    document.getElementById('sn-trash').textContent = n;
   } catch {}
 }
 

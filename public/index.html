@@ -1472,9 +1472,10 @@ async function submitForm(){
     dependencyNotes:     document.getElementById('f-dependencyNotes').value.trim(),
     subTasks:            getSubs(),
   };
+  const id = editId;
   closeModal();
-  if(editId) await apiupdate(editId,data);
-  else       await apicreate(data);
+  if(id) await apiupdate(id,data);
+  else   await apicreate(data);
 }
 
 document.addEventListener('keydown',e=>{

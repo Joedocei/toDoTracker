@@ -987,9 +987,49 @@ async function req(method, url, body) {
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
+/* ── Filter state persistence ── */
+function saveFilterState() {
+  try {
+    localStorage.setItem('tf', JSON.stringify(
+      { fStatus, fPriority, fEffort, fTime, fTag, sortKey, query }
+    ));
+  } catch {}
+}
+
+function restoreFilterState() {
+  try {
+    const s = JSON.parse(localStorage.getItem('tf') || 'null');
+    if (!s) return;
+    fStatus   = s.fStatus   ?? 'all';
+    fPriority = s.fPriority ?? '';
+    fEffort   = s.fEffort   ?? '';
+    fTime     = s.fTime     ?? '';
+    fTag      = s.fTag      ?? '';
+    sortKey   = s.sortKey   ?? 'priority';
+    query     = s.query     ?? '';
+  } catch {}
+}
+
+function restorePillStates() {
+  [
+    ['grp-status',   fStatus || 'all'],
+    ['grp-priority', fPriority],
+    ['grp-effort',   fEffort],
+    ['grp-time',     fTime],
+    ['grp-sort',     sortKey],
+  ].forEach(([groupId, val]) => {
+    document.querySelectorAll(`#${groupId} .pill`).forEach(b =>
+      b.classList.toggle('active', b.getAttribute('onclick').includes(`'${val}'`))
+    );
+  });
+  if (query) document.querySelector('.search-box').value = query;
+}
+
 async function load() {
+  restoreFilterState();
   try { todos = await req('GET','/api/todos'); } catch { todos=[]; }
   render();
+  restorePillStates();
   refreshTrashBadge();
 }
 
@@ -1291,6 +1331,8 @@ function render() {
   </div>`:''}
 </div>`;
   }).join('');
+
+  saveFilterState();
 
   // Restore expanded state after DOM rebuild
   openCards.forEach(id => {

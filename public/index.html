@@ -424,6 +424,11 @@
     .att-name a { color: var(--text); text-decoration: none; }
     .att-name a:hover { text-decoration: underline; color: #2563eb; }
     .att-size { font-size: 0.68rem; color: var(--text-faint); flex-shrink: 0; }
+    .att-dl {
+      color: var(--text-faint); font-size: 0.85rem; line-height: 1;
+      flex-shrink: 0; padding: 0 2px; text-decoration: none; transition: color 0.1s;
+    }
+    .att-dl:hover { color: #2563eb; }
     .att-del {
       background: none; border: none; cursor: pointer;
       color: var(--text-faint); font-size: 1rem; line-height: 1;
@@ -1704,6 +1709,7 @@ function render() {
           <span class="att-icon">${fileIcon(a.type)}</span>
           <span class="att-name"><a href="/api/attachments/${esc(a.storedName)}" target="_blank">${esc(a.name)}</a></span>
           <span class="att-size">${fmtFileSize(a.size)}</span>
+          <a class="att-dl" href="/api/attachments/${esc(a.storedName)}?dl=1" download="${esc(a.name)}" title="Download" onclick="event.stopPropagation()">↓</a>
           <button class="att-del" onclick="deleteAttachment('${t.id}','${a.id}',event)" title="Remove">×</button>
         </div>`).join('')}
       </div>`:''}

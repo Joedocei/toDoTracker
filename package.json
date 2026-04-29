@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node --test test/enrich.test.js"
+    "test": "node --test test/enrich.test.js test/priorityEngine.test.js",
+    "prioritize": "node scripts/prioritizeTodos.js",
+    "prioritize:ai": "node scripts/prioritizeTodos.js --ai"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.91.1",

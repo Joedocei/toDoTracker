@@ -10,14 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Fetch todos from Railway
         run: |
+          if [ -z "${{ secrets.RAILWAY_URL }}" ]; then
+            echo "Error: RAILWAY_URL secret is not set."
+            exit 1
+          fi
           mkdir -p data
-          curl -sf "${{ vars.RAILWAY_URL }}/api/todos" > data/todos.json
+          curl -sf "${{ secrets.RAILWAY_URL }}/api/todos" > data/todos.json
           echo "Fetched $(jq length data/todos.json) todos"
 
       - name: Commit if changed

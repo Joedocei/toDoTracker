@@ -15,8 +15,9 @@ const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE   = process.env.DATA_FILE   || path.join(__dirname, 'data', 'todos.json');
-const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(path.dirname(DATA_FILE), 'uploads');
+const DATA_FILE     = process.env.DATA_FILE     || path.join(__dirname, 'data', 'todos.json');
+const PROJECTS_FILE = process.env.PROJECTS_FILE || path.join(path.dirname(DATA_FILE), 'projects.json');
+const UPLOADS_DIR   = process.env.UPLOADS_DIR   || path.join(path.dirname(DATA_FILE), 'uploads');
 
 const upload = multer({
   limits: { fileSize: 25 * 1024 * 1024 },
@@ -50,6 +51,21 @@ function writeTodos(todos) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(todos, null, 2));
 }
 
+function readProjects() {
+  try {
+    const dir = path.dirname(PROJECTS_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(PROJECTS_FILE)) fs.writeFileSync(PROJECTS_FILE, '[]');
+    return JSON.parse(fs.readFileSync(PROJECTS_FILE, 'utf8'));
+  } catch { return []; }
+}
+
+function writeProjects(projects) {
+  const dir = path.dirname(PROJECTS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projects, null, 2));
+}
+
 app.get('/api/todos', (req, res) => {
   res.json(readTodos().filter(t => !t.deleted));
 });
@@ -80,6 +96,8 @@ app.post('/api/todos', (req, res) => {
     ...(b.mainCategory != null && { mainCategory: b.mainCategory }),
     ...(b.subCategory  != null && { subCategory:  b.subCategory }),
     ...(b.aiAssist     != null && { aiAssist:     b.aiAssist }),
+    projectId:    b.projectId    ?? null,
+    parentTaskId: b.parentTaskId ?? null,
   };
   todos.push(todo);
   writeTodos(todos);
@@ -141,6 +159,87 @@ app.delete('/api/trash/:id', (req, res) => {
 app.delete('/api/trash', (req, res) => {
   writeTodos(readTodos().filter(t => !t.deleted));
   res.json({ ok: true });
+});
+
+// ── Projects ──────────────────────────────────────────────────────────────────
+app.get('/api/projects', (req, res) => {
+  res.json(readProjects().filter(p => !p.deleted));
+});
+
+app.post('/api/projects', (req, res) => {
+  const projects = readProjects();
+  const b = req.body;
+  const project = {
+    id: 'proj-' + Date.now().toString(),
+    title: (b.title || '').trim() || 'Untitled Project',
+    description: (b.description || '').trim(),
+    status: b.status || 'active',
+    priority: b.priority || 'Medium',
+    mainCategory: (b.mainCategory || '').trim(),
+    subCategory: (b.subCategory || '').trim(),
+    tags: Array.isArray(b.tags) ? b.tags : [],
+    dueDate: b.dueDate || null,
+    userNotes: (b.userNotes || '').trim(),
+    createdAt: new Date().toISOString(),
+  };
+  projects.push(project);
+  writeProjects(projects);
+  res.status(201).json(project);
+});
+
+app.put('/api/projects/:id', (req, res) => {
+  const projects = readProjects();
+  const idx = projects.findIndex(p => p.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  projects[idx] = { ...projects[idx], ...req.body, id: req.params.id };
+  writeProjects(projects);
+  res.json(projects[idx]);
+});
+
+app.delete('/api/projects/:id', (req, res) => {
+  const projects = readProjects();
+  const idx = projects.findIndex(p => p.id === req.params.id && !p.deleted);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  projects[idx] = { ...projects[idx], deleted: true, deletedAt: new Date().toISOString() };
+  writeProjects(projects);
+  res.json({ ok: true });
+});
+
+// ── Subtask promotion ─────────────────────────────────────────────────────────
+app.post('/api/todos/:id/subtasks/:subtaskId/promote', (req, res) => {
+  const todos = readTodos();
+  const idx = todos.findIndex(t => t.id === req.params.id && !t.deleted);
+  if (idx === -1) return res.status(404).json({ error: 'Todo not found' });
+  const parent = todos[idx];
+  const subs = parent.subTasks || [];
+  const subIdx = subs.findIndex(s => s.id === req.params.subtaskId);
+  if (subIdx === -1) return res.status(404).json({ error: 'Subtask not found' });
+  const sub = subs[subIdx];
+  const newTodo = {
+    id: Date.now().toString(),
+    title: sub.title || 'Untitled',
+    status: sub.status || 'not-started',
+    priority: sub.priority || parent.priority || 'Medium',
+    effort: sub.effort || 'M',
+    timeEstimate: sub.timeEstimate || '',
+    description: '',
+    implementationNotes: '',
+    notes: '',
+    effortJustification: '',
+    timeJustification: '',
+    tags: [],
+    blockedBy: [],
+    benefitsFrom: [],
+    dependencyNotes: '',
+    subTasks: [],
+    projectId: parent.projectId || null,
+    parentTaskId: parent.id,
+    createdAt: new Date().toISOString(),
+  };
+  todos[idx] = { ...parent, subTasks: subs.filter((_, i) => i !== subIdx) };
+  todos.splice(idx + 1, 0, newTodo);
+  writeTodos(todos);
+  res.status(201).json(newTodo);
 });
 
 const ENRICH_SYSTEM = `You are a project management assistant. Fill in the specified empty fields for each todo.

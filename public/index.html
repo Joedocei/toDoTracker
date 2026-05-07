@@ -884,6 +884,64 @@
     .ai-field-val { color: #16a34a; line-height: 1.4; }
     .ai-empty { text-align: center; padding: 30px; color: var(--text-dim); font-size: 0.88rem; }
 
+    /* ── Project nav ── */
+    .proj-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .proj-tab {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 5px 13px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.1s;
+      white-space: nowrap;
+    }
+    .proj-tab:hover { background: #e8e6e1; color: var(--text); }
+    .proj-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .proj-tab-new { border-style: dashed; color: var(--text-faint); }
+    .proj-tab-new:hover { color: var(--text-dim); background: var(--surface2); border-style: dashed; }
+
+    /* Project header card */
+    .proj-header-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px 12px;
+      margin-bottom: 12px;
+    }
+    .proj-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .proj-header-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .proj-header-actions { display: flex; gap: 5px; flex-shrink: 0; }
+    .proj-header-desc { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 8px; line-height: 1.5; }
+    .proj-progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
+    .proj-progress-fill { height: 100%; background: var(--c-completed); border-radius: 2px; transition: width 0.3s; }
+    .proj-header-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    /* Project badge on task cards */
+    .b-proj { background: rgba(139,92,246,0.10); color: #7c3aed; border-color: rgba(139,92,246,0.25); font-weight: 500; }
+
+    /* Subtask promote button */
+    .st-promote {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-faint); font-size: 0.68rem; font-weight: 600;
+      padding: 1px 5px; border-radius: 3px;
+      transition: all 0.1s; margin-left: auto; flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .st-promote:hover { color: #2563eb; background: rgba(37,99,235,0.08); }
+
+    /* Parent task breadcrumb */
+    .parent-task-link { color: #2563eb; cursor: pointer; text-decoration: underline; font-size: 0.83rem; }
+    .parent-task-link:hover { opacity: 0.75; }
+
     /* ── Responsive ── */
     @media (max-width: 720px) {
       .layout { flex-direction: column; height: auto; overflow: visible; }
@@ -1089,9 +1147,11 @@
         <button class="btn-trash" id="btn-trash" onclick="openTrash()">🗑 Trash</button>
         <button class="btn-enrich" id="btn-enrich" onclick="enrichWithAI()">✦ Auto-fill</button>
         <button class="btn-prioritize" id="btn-prioritize" onclick="openPriorityModal()">✦ Prioritize</button>
-        <button class="btn-add" onclick="openModal()">+ Add Todo</button>
+        <button class="btn-add" onclick="openModal()">+ Add Task</button>
       </div>
     </div>
+    <div id="project-nav" class="proj-nav"></div>
+    <div id="project-header"></div>
     <div class="todo-list" id="list"></div>
   </main>
 
@@ -1174,6 +1234,12 @@
           <label>Sub-Category</label>
           <input id="f-subCategory" type="text" placeholder="Engine infers…">
         </div>
+      </div>
+      <div class="fg" style="margin-top:6px">
+        <label>Project</label>
+        <select id="f-projectId">
+          <option value="">— Misc (no project) —</option>
+        </select>
       </div>
       <div class="fg" style="flex-direction:row;align-items:center;gap:8px;margin-top:4px">
         <input id="f-aiAssist" type="checkbox" style="width:auto;margin:0">
@@ -1285,6 +1351,58 @@
   </div>
 </div>
 
+<!-- ══ PROJECT MODAL ══ -->
+<div class="overlay" id="proj-overlay" onclick="projOverlayClick(event)">
+  <div class="modal" style="max-width:540px" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2 id="proj-modal-title">New Project</h2>
+      <button class="modal-x" onclick="closeProjectModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label>Project Name *</label>
+        <input id="pf-title" type="text" placeholder="e.g. Dupuy Flip, RvP Disposition…">
+      </div>
+      <div class="fg">
+        <label>Description</label>
+        <textarea id="pf-description" placeholder="What is this project about?"></textarea>
+      </div>
+      <div class="gr4">
+        <div class="fg">
+          <label>Status</label>
+          <select id="pf-status">
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Priority</label>
+          <select id="pf-priority">
+            <option value="Crucial">Crucial</option>
+            <option value="Very Strong">Very Strong</option>
+            <option value="Strong">Strong</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Category</label>
+          <input id="pf-mainCategory" type="text" placeholder="e.g. Real Estate">
+        </div>
+        <div class="fg">
+          <label>Due Date</label>
+          <input id="pf-dueDate" type="date">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeProjectModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitProjectForm()">Save Project</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ PRIORITY MODAL ══ -->
 <div class="overlay" id="prio-overlay" onclick="prioOverlayClick(event)">
   <div class="modal prio-modal" role="dialog" aria-modal="true">
@@ -1324,7 +1442,10 @@ const EFFORT_ORDER   = { XL:0,L:1,M:2,S:3,XS:4 };
 const TIME_ORDER     = { xl:0,l:1,m:2,s:3,xs:4,'':9 };
 const TIME_LABELS    = { xs:'< 30 min',s:'30m–1hr',m:'1–4 hrs',l:'4–16 hrs',xl:'1+ days' };
 
-let todos       = [];
+let todos            = [];
+let projects         = [];
+let currentProjectId = null; // null = All, 'misc' = Misc, 'proj-xxx' = specific project
+let editProjectId    = null;
 let fStatus     = 'all';
 let fPriority   = '';
 let fEffort     = '';
@@ -1355,7 +1476,7 @@ function saveFilterState() {
     localStorage.setItem('tf', JSON.stringify({
       fStatus, fPriority, fEffort, fTime, fTag,
       sortKey: sortKey === 'ai' ? 'priority' : sortKey,
-      query,
+      query, currentProjectId,
     }));
   } catch {}
 }
@@ -1364,13 +1485,14 @@ function restoreFilterState() {
   try {
     const s = JSON.parse(localStorage.getItem('tf') || 'null');
     if (!s) return;
-    fStatus   = s.fStatus   ?? 'all';
-    fPriority = s.fPriority ?? '';
-    fEffort   = s.fEffort   ?? '';
-    fTime     = s.fTime     ?? '';
-    fTag      = s.fTag      ?? '';
-    sortKey   = s.sortKey   ?? 'priority';
-    query     = s.query     ?? '';
+    fStatus          = s.fStatus          ?? 'all';
+    fPriority        = s.fPriority        ?? '';
+    fEffort          = s.fEffort          ?? '';
+    fTime            = s.fTime            ?? '';
+    fTag             = s.fTag             ?? '';
+    sortKey          = s.sortKey          ?? 'priority';
+    query            = s.query            ?? '';
+    currentProjectId = s.currentProjectId ?? null;
   } catch {}
 }
 
@@ -1391,7 +1513,8 @@ function restorePillStates() {
 
 async function load() {
   restoreFilterState();
-  try { todos = await req('GET','/api/todos'); } catch { todos=[]; }
+  try { [todos, projects] = await Promise.all([req('GET','/api/todos'), req('GET','/api/projects')]); }
+  catch { todos=[]; projects=[]; }
   render();
   restorePillStates();
   refreshTrashBadge();
@@ -1558,7 +1681,10 @@ function schedSearch(v) {
 }
 
 function visible() {
-  let list = fStatus==='all' ? [...todos] : todos.filter(t=>t.status===fStatus);
+  let list = [...todos];
+  if (currentProjectId === 'misc') list = list.filter(t => !t.projectId);
+  else if (currentProjectId !== null) list = list.filter(t => t.projectId === currentProjectId);
+  if (fStatus !== 'all') list = list.filter(t => t.status === fStatus);
   if (fPriority) list=list.filter(t=>t.priority===fPriority);
   if (fEffort) list=list.filter(t=>t.effort===fEffort);
   if (fTime)   list=list.filter(t=>t.timeEstimate===fTime);
@@ -1630,25 +1756,172 @@ function todoLowContext(t) {
   return [t.description, t.notes].filter(Boolean).join(' ').trim().length < 30;
 }
 
+/* ── Project nav & header ── */
+function renderProjectNav() {
+  const nav = document.getElementById('project-nav');
+  const tabs = [
+    `<button class="proj-tab${currentProjectId===null?' active':''}" onclick="setProject(null)">All</button>`,
+    `<button class="proj-tab${currentProjectId==='misc'?' active':''}" onclick="setProject('misc')">Misc</button>`,
+    ...projects.map(p =>
+      `<button class="proj-tab${currentProjectId===p.id?' active':''}" onclick="setProject('${p.id}')">${esc(p.title)}</button>`
+    ),
+    `<button class="proj-tab proj-tab-new" onclick="openProjectModal()">+ New Project</button>`,
+  ];
+  nav.innerHTML = tabs.join('');
+}
+
+function renderProjectHeader() {
+  const el = document.getElementById('project-header');
+  if (!currentProjectId || currentProjectId === 'misc') { el.innerHTML = ''; return; }
+  const proj = projects.find(p => p.id === currentProjectId);
+  if (!proj) { el.innerHTML = ''; return; }
+  const projectTasks = todos.filter(t => t.projectId === currentProjectId);
+  const doneTasks = projectTasks.filter(t => t.status === 'completed').length;
+  const pct = projectTasks.length ? Math.round(doneTasks / projectTasks.length * 100) : 0;
+  const PRIORITY_COLORS = { Crucial:'#dc2626','Very Strong':'#ea580c',Strong:'#d97706',Medium:'#0891b2',Low:'#9ca3af' };
+  const prioColor = PRIORITY_COLORS[proj.priority] || '#9ca3af';
+  el.innerHTML = `
+<div class="proj-header-card">
+  <div class="proj-header-top">
+    <div class="proj-header-title">${esc(proj.title)}</div>
+    <div class="proj-header-actions">
+      <button class="abtn" onclick="openProjectModal('${proj.id}')" title="Edit project">✎</button>
+      <button class="abtn del" onclick="confirmDeleteProject('${proj.id}')" title="Delete project">✕</button>
+    </div>
+  </div>
+  ${proj.description?`<div class="proj-header-desc">${esc(proj.description)}</div>`:''}
+  <div class="proj-progress-bar"><div class="proj-progress-fill" style="width:${pct}%"></div></div>
+  <div class="proj-header-meta">
+    <span style="font-size:0.72rem;color:var(--text-dim)">${doneTasks} / ${projectTasks.length} tasks done</span>
+    <span class="badge b-eff" style="border-color:${prioColor};color:${prioColor};background:transparent">${esc(proj.priority)}</span>
+    ${proj.mainCategory?`<span style="font-size:0.72rem;color:var(--text-dim)">${esc(proj.mainCategory)}</span>`:''}
+    ${proj.dueDate?`<span style="font-size:0.72rem;color:var(--text-dim)">Due ${new Date(proj.dueDate+'T00:00:00').toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'})}</span>`:''}
+  </div>
+</div>`;
+}
+
+function setProject(id) {
+  currentProjectId = id;
+  render();
+  saveFilterState();
+}
+
+/* ── Project CRUD ── */
+function openProjectModal(id) {
+  editProjectId = id || null;
+  const p = id ? projects.find(x => x.id === id) : null;
+  document.getElementById('proj-modal-title').textContent = p ? 'Edit Project' : 'New Project';
+  document.getElementById('pf-title').value       = p?.title       || '';
+  document.getElementById('pf-description').value = p?.description || '';
+  document.getElementById('pf-status').value      = p?.status      || 'active';
+  document.getElementById('pf-priority').value    = p?.priority    || 'Medium';
+  document.getElementById('pf-mainCategory').value= p?.mainCategory|| '';
+  document.getElementById('pf-dueDate').value     = p?.dueDate     || '';
+  document.getElementById('proj-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('pf-title').focus(), 40);
+}
+
+function closeProjectModal() {
+  document.getElementById('proj-overlay').classList.remove('open');
+  editProjectId = null;
+}
+
+function projOverlayClick(e) {
+  if (e.target === document.getElementById('proj-overlay')) closeProjectModal();
+}
+
+async function submitProjectForm() {
+  const title = document.getElementById('pf-title').value.trim();
+  if (!title) { document.getElementById('pf-title').focus(); return; }
+  const data = {
+    title,
+    description:  document.getElementById('pf-description').value.trim(),
+    status:       document.getElementById('pf-status').value,
+    priority:     document.getElementById('pf-priority').value,
+    mainCategory: document.getElementById('pf-mainCategory').value.trim(),
+    dueDate:      document.getElementById('pf-dueDate').value || null,
+  };
+  const id = editProjectId;
+  closeProjectModal();
+  try {
+    if (id) {
+      const updated = await req('PUT', `/api/projects/${id}`, data);
+      const i = projects.findIndex(p => p.id === id);
+      if (i !== -1) projects[i] = updated; else projects.push(updated);
+    } else {
+      const created = await req('POST', '/api/projects', data);
+      projects.push(created);
+      currentProjectId = created.id;
+    }
+    render();
+  } catch(err) {
+    alert('Failed to save project: ' + err.message);
+  }
+}
+
+async function confirmDeleteProject(id) {
+  const proj = projects.find(p => p.id === id);
+  if (!proj || !confirm(`Delete project "${proj.title}"? Tasks in this project will move to Misc.`)) return;
+  try {
+    await req('DELETE', `/api/projects/${id}`);
+    projects = projects.filter(p => p.id !== id);
+    if (currentProjectId === id) currentProjectId = null;
+    render();
+  } catch(err) {
+    alert('Failed to delete project: ' + err.message);
+  }
+}
+
+function refreshProjectSelect() {
+  const sel = document.getElementById('f-projectId');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Misc (no project) —</option>' +
+    projects.map(p => `<option value="${p.id}">${esc(p.title)}</option>`).join('');
+}
+
+/* ── Subtask promotion ── */
+async function promoteSubtask(todoId, subId) {
+  const t = todos.find(x => x.id === todoId);
+  if (!t) return;
+  const sub = (t.subTasks || []).find(s => s.id === subId);
+  if (!sub || !confirm(`Promote "${sub.title}" to a full task? It will be removed from this task's subtask list.`)) return;
+  try {
+    await req('POST', `/api/todos/${todoId}/subtasks/${subId}/promote`);
+    todos = await req('GET', '/api/todos');
+    openCards.add(todoId);
+    render();
+  } catch(err) {
+    alert('Failed to promote subtask: ' + err.message);
+  }
+}
+
 /* ── Render ── */
 function render() {
-  document.getElementById('sn-total').textContent     =todos.length;
-  document.getElementById('sn-notstarted').textContent=todos.filter(t=>t.status==='not-started').length;
-  document.getElementById('sn-inflight').textContent  =todos.filter(t=>t.status==='in-flight').length;
-  document.getElementById('sn-completed').textContent =todos.filter(t=>t.status==='completed').length;
+  const statsBase = currentProjectId === null ? todos
+    : currentProjectId === 'misc' ? todos.filter(t => !t.projectId)
+    : todos.filter(t => t.projectId === currentProjectId);
+  document.getElementById('sn-total').textContent     = statsBase.length;
+  document.getElementById('sn-notstarted').textContent= statsBase.filter(t=>t.status==='not-started').length;
+  document.getElementById('sn-inflight').textContent  = statsBase.filter(t=>t.status==='in-flight').length;
+  document.getElementById('sn-completed').textContent = statsBase.filter(t=>t.status==='completed').length;
   document.getElementById('app-date').textContent='Updated '+new Date().toLocaleString();
+  renderProjectNav();
+  renderProjectHeader();
 
   renderTagCloud();
 
   const list=visible();
   const cnt=document.getElementById('main-count');
-  cnt.textContent = list.length===todos.length
-    ? `${todos.length} todo${todos.length!==1?'s':''}`
-    : `${list.length} of ${todos.length} todos`;
+  cnt.textContent = list.length===statsBase.length
+    ? `${statsBase.length} task${statsBase.length!==1?'s':''}`
+    : `${list.length} of ${statsBase.length} tasks`;
 
   const el=document.getElementById('list');
   if (!list.length){
-    el.innerHTML=`<div class="empty"><div class="icon">📋</div><p>${todos.length===0?'No todos yet — hit <strong>+ Add Todo</strong> to get started.':'Nothing matches your current filters.'}</p></div>`;
+    const emptyMsg = statsBase.length===0
+      ? 'No tasks here yet — hit <strong>+ Add Task</strong> to get started.'
+      : 'Nothing matches your current filters.';
+    el.innerHTML=`<div class="empty"><div class="icon">📋</div><p>${emptyMsg}</p></div>`;
     return;
   }
 
@@ -1667,6 +1940,7 @@ function render() {
 
     const isAi  = todoAiAssist(t);
     const isLow = todoLowContext(t);
+    const proj  = t.projectId ? projects.find(p => p.id === t.projectId) : null;
     const dndAttrs = sortKey==='custom'
       ? `draggable="true" ondragstart="cardDragStart(event,'${t.id}')" ondragover="cardDragOver(event,'${t.id}')" ondragleave="cardDragLeave(event,'${t.id}')" ondragend="cardDragEnd(event)" ondrop="cardDrop(event,'${t.id}')"`
       : '';
@@ -1684,6 +1958,7 @@ function render() {
           ${isBlk?'<span class="badge" style="background:rgba(220,38,38,0.08);color:#dc2626;border:1px solid rgba(220,38,38,0.2)">⛔ blocked</span>':''}
           ${isAi?'<span class="badge b-ai" title="This task can largely be done by AI">⚡ AI</span>':''}
           ${isLow?'<span class="badge b-ctx" title="Add more context so the priority engine can rank this accurately">! context</span>':''}
+          ${(currentProjectId===null&&proj)?`<span class="badge b-proj" title="Project: ${esc(proj.title)}">${esc(proj.title)}</span>`:''}
           <button class="abtn" onclick="openModal('${t.id}')" title="Edit">✎</button>
           <button class="abtn del" onclick="confirmDelete('${t.id}')" title="Delete">✕</button>
           ${hasDet?`<button class="xbtn" id="xb-${t.id}">▼</button>`:''}
@@ -1737,6 +2012,7 @@ function render() {
             </svg>
           </div>
           <span class="sttext${s.status==='completed'?' done':''}">${esc(s.title)}</span>
+          <button class="st-promote" onclick="event.stopPropagation();promoteSubtask('${t.id}','${s.id}')" title="Promote to full task">→ task</button>
         </li>`).join('')}
       </ul>
     </div>`:''}
@@ -1753,6 +2029,14 @@ function render() {
       </div>`:''}
       ${t.dependencyNotes?`<div class="ds-text" style="margin-top:5px">${esc(t.dependencyNotes)}</div>`:''}
     </div>`:''}
+
+    ${t.parentTaskId?(()=>{
+      const parent=todos.find(x=>x.id===t.parentTaskId);
+      return parent?`<div class="ds">
+        <div class="ds-title">Child Task</div>
+        <div class="ds-text">↳ Part of: <span class="parent-task-link" onclick="toggleDetail('${parent.id}');document.getElementById('card-${parent.id}')?.scrollIntoView({behavior:'smooth',block:'nearest'})">${esc(parent.title)}</span></div>
+      </div>`:'';
+    })():''}
 
     ${t.notes?`<div class="ds">
       <div class="ds-title star">AI Opportunities</div>
@@ -1895,7 +2179,8 @@ function parseIds(s){return s.split(',').map(x=>x.trim()).filter(Boolean);}
 function openModal(id){
   editId=id||null;
   const t=id?todos.find(x=>x.id===id):null;
-  document.getElementById('modal-title').textContent      =t?'Edit Todo':'Add Todo';
+  document.getElementById('modal-title').textContent      =t?'Edit Task':'Add Task';
+  refreshProjectSelect();
   document.getElementById('f-title').value               =t?.title||'';
   document.getElementById('f-status').value              =t?.status||'not-started';
   document.getElementById('f-priority').value            =t?.priority||'Medium';
@@ -1915,6 +2200,9 @@ function openModal(id){
   document.getElementById('f-blockedBy').value           =(t?.blockedBy||[]).join(', ');
   document.getElementById('f-benefitsFrom').value        =(t?.benefitsFrom||[]).join(', ');
   document.getElementById('f-dependencyNotes').value     =t?.dependencyNotes||'';
+  // Project selector: existing task uses its projectId; new task pre-selects current project (not misc)
+  const defaultProject = t ? (t.projectId||'') : (currentProjectId && currentProjectId!=='misc' ? currentProjectId : '');
+  document.getElementById('f-projectId').value = defaultProject;
   curTags=[...(t?.tags||[])]; renderChips();
   document.getElementById('f-tinput').value='';
   const ed=document.getElementById('sted'); ed.innerHTML='';
@@ -1952,6 +2240,7 @@ async function submitForm(){
     benefitsFrom:        parseIds(document.getElementById('f-benefitsFrom').value),
     dependencyNotes:     document.getElementById('f-dependencyNotes').value.trim(),
     subTasks:            getSubs(),
+    projectId:           document.getElementById('f-projectId').value || null,
   };
   const id = editId;
   closeModal();
@@ -1960,8 +2249,9 @@ async function submitForm(){
 }
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeModal(); closeAIModal(); closeTrash(); closePrioModal(); }
+  if(e.key==='Escape'){ closeModal(); closeAIModal(); closeTrash(); closePrioModal(); closeProjectModal(); }
   if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&document.getElementById('overlay').classList.contains('open')) submitForm();
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&document.getElementById('proj-overlay').classList.contains('open')) submitProjectForm();
 });
 
 /* ── AI Enrichment ── */

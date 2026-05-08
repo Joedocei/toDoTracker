@@ -1,4 +1,4 @@
-name: Sync todos from Railway
+name: Sync data from Railway
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch todos from Railway
+      - name: Fetch todos and projects from Railway
         run: |
           if [ -z "${{ secrets.RAILWAY_URL }}" ]; then
             echo "Error: RAILWAY_URL secret is not set."
@@ -25,11 +25,13 @@ jobs:
           mkdir -p data
           curl -sf "${{ secrets.RAILWAY_URL }}/api/todos" > data/todos.json
           echo "Fetched $(jq length data/todos.json) todos"
+          curl -sf "${{ secrets.RAILWAY_URL }}/api/projects" > data/projects.json
+          echo "Fetched $(jq length data/projects.json) projects"
 
       - name: Commit if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/todos.json
+          git add data/todos.json data/projects.json
           git diff --cached --quiet && echo "No changes." || \
-            (git commit -m "sync: update todos from Railway [skip ci]" && git push)
+            (git commit -m "sync: update data from Railway [skip ci]" && git push)

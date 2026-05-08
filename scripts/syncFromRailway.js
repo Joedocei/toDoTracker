@@ -14,18 +14,22 @@ if (!BASE) {
   process.exit(1);
 }
 
-async function main() {
-  console.log(`Fetching from ${BASE}/api/todos ...`);
-  const res = await fetch(`${BASE}/api/todos`);
-  if (!res.ok) throw new Error(`GET /api/todos → ${res.status}`);
-
-  const todos = await res.json();
-  const dest  = path.join(__dirname, '..', 'data', 'todos.json');
-
+async function fetchAndWrite(url, dest, label) {
+  console.log(`Fetching from ${url} ...`);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
+  const data = await res.json();
   fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.writeFileSync(dest, JSON.stringify(todos, null, 2));
+  fs.writeFileSync(dest, JSON.stringify(data, null, 2));
+  console.log(`Synced ${data.length} ${label} → ${path.relative(path.join(__dirname, '..'), dest)}`);
+}
 
-  console.log(`Synced ${todos.length} todos → data/todos.json`);
+async function main() {
+  const dataDir = path.join(__dirname, '..', 'data');
+  await Promise.all([
+    fetchAndWrite(`${BASE}/api/todos`,    path.join(dataDir, 'todos.json'),    'todos'),
+    fetchAndWrite(`${BASE}/api/projects`, path.join(dataDir, 'projects.json'), 'projects'),
+  ]);
 }
 
 main().catch(err => { console.error(err.message); process.exit(1); });

@@ -2752,10 +2752,17 @@ document.getElementById('login-pw').addEventListener('keydown', e => {
   if (e.key === 'Enter') submitLogin();
 });
 
-if (sessionStorage.getItem('auth') === '1') {
-  document.getElementById('login-overlay').classList.add('hidden');
-  load();
-}
+(async function init() {
+  let loginRequired = true;
+  try {
+    const cfg = await fetch('/api/config').then(r => r.json());
+    loginRequired = cfg.loginRequired;
+  } catch {}
+  if (!loginRequired || sessionStorage.getItem('auth') === '1') {
+    document.getElementById('login-overlay').classList.add('hidden');
+    load();
+  }
+})();
 </script>
 </body>
 </html>

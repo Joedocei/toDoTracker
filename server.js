@@ -13,6 +13,8 @@ const {
 
 const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic() : null;
 
+const LOGIN_REQUIRED = process.env.LOGIN_REQUIRED === 'true';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE     = process.env.DATA_FILE     || path.join(__dirname, 'data', 'todos.json');
@@ -459,6 +461,10 @@ app.delete('/api/todos/:id/attachments/:attachmentId', (req, res) => {
   const filePath = path.join(UPLOADS_DIR, storedName);
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   res.json({ ok: true });
+});
+
+app.get('/api/config', (req, res) => {
+  res.json({ loginRequired: LOGIN_REQUIRED });
 });
 
 app.post('/api/auth', (req, res) => {

@@ -2285,5 +2285,55 @@
     "createdAt": "2026-08-07T19:41:52.902Z",
     "projectId": null,
     "parentTaskId": null
+  },
+  {
+    "id": "1786134978348",
+    "title": "Refactor rvp-agent into a generalized real-estate agent with domain sub-agents",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "XL",
+    "timeEstimate": "xl",
+    "description": "Joe's original rvp-agent is scoped to RealVestor Partners specifically, but his real-estate activity spans more than that: RVP wholesale, his own personal deals/projects (currently tracked only financially in personal-cfo, e.g. the 1730 Dupuy flip), SubTo, and potential future lines (multifamily, commercial, land, flipping, a deal-analyzer). The idea: a generalized real-estate agent with specialized sub-agents per domain.",
+    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-07); explicitly NOT authorized to start -- Joe chose to capture this for later rather than begin planning it the same night. Fact-check done before capturing: rvp-agent's 5 active deals are all genuinely RVP-owned (Seth Timmerman, Charles Anderson, John Barr, Nicklous Salzman, Oni as assigned_owner; Joe only as disposition_owner) -- nothing is actually misfiled today. The real gap identified: Joe's own personal real estate (1730 Dupuy Road, 4709 Watchrun, 802 Kentucky Ave, 2205/2207 Bowlin Ct, 4610 Landing Circle, Whitney Ave) gets *financial* tracking in personal-cfo (debt, cash flow, closing costs) but not the *operational* tracking rvp-agent gives RVP deals (daily briefs, next-action recommendations, disposition activity, buyer contacts) -- and SubTo, multifamily, commercial, land, and a deal-analyzer have no home in either project's current shape. This would be a real structural refactor, not a quick add: it touches control-center's agent-registry.yaml, personal-ai-os-core's hardcoded agent assumptions (KNOWN_AGENTS, AGENT_OUTPUT_GLOBS), and months of git history built around 'rvp-agent = RVP'. Needs its own dedicated planning session before any execution.",
+    "notes": "Sub-agents named so far: RVP (wholesale), personal portfolio, SubTo. Future avenues named: multifamily, commercial, land, flipping, a deal-analyzer agent.",
+    "effortJustification": "Not yet scoped -- placeholder estimate. Likely the largest single architectural change to this system to date given how many existing pieces reference 'rvp-agent' by name.",
+    "timeJustification": "Not yet scoped -- placeholder estimate pending a dedicated planning pass.",
+    "tags": [
+      "architecture",
+      "rvp",
+      "real-estate",
+      "sub-agents",
+      "ai-os",
+      "personal-ai-os",
+      "refactor"
+    ],
+    "blockedBy": [],
+    "benefitsFrom": [],
+    "dependencyNotes": "",
+    "subTasks": [
+      {
+        "id": "sub-refactor-1",
+        "title": "Dedicated planning session: what moves where, what breaks, migration order",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-refactor-2",
+        "title": "Decide the operational-vs-financial split: should personal real estate deals get RVP-style operational tracking, and if so where",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-refactor-3",
+        "title": "Update control-center/current/agent-registry.yaml and personal-ai-os-core's hardcoded agent assumptions (KNOWN_AGENTS, AGENT_OUTPUT_GLOBS) for the new structure",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-refactor-4",
+        "title": "Define the SubTo sub-agent's scope",
+        "status": "not-started"
+      }
+    ],
+    "createdAt": "2026-08-07T20:36:18.348Z",
+    "projectId": null,
+    "parentTaskId": null
   }
 ]

@@ -2190,5 +2190,100 @@
     "createdAt": "2026-08-07T17:18:33.308Z",
     "projectId": null,
     "parentTaskId": null
+  },
+  {
+    "id": "1786131712604",
+    "title": "Social media manager agent for real estate content",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "L",
+    "timeEstimate": "l",
+    "description": "An agent to help create real estate content (videos, video scripts, pictures, blogs, posts, stories/reels) that builds Joe's name recognition tied to his real estate work -- documenting both the wins and the losses. Eventually: a cadenced posting schedule the agent can run automatically on Joe's behalf.",
+    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-07); not yet scoped or started. First real subtask before any content plan: pick a catchy, memorable social media moniker/handle. Would need a defined content cadence and a running log of real wins/losses to draw material from -- likely ties into rvp-agent's disposition-activity.csv and active-deals.yaml as raw source material, read-only, same pattern as every other cross-project reference in this workspace.",
+    "notes": "Heavy Claude fit: script/copy drafting, content ideas from real deal activity, eventually a posting-cadence planner. Actual auto-posting would be a separate, later connection decision (same category as the Google Calendar integration) -- not scoped yet.",
+    "effortJustification": "Not yet scoped -- placeholder estimate pending design.",
+    "timeJustification": "Not yet scoped -- placeholder estimate pending design.",
+    "tags": [
+      "social-media",
+      "content",
+      "real-estate",
+      "marketing",
+      "branding",
+      "ai-os",
+      "personal-ai-os"
+    ],
+    "blockedBy": [],
+    "benefitsFrom": [],
+    "dependencyNotes": "",
+    "subTasks": [
+      {
+        "id": "sub-social-1",
+        "title": "Pick a catchy, memorable social media moniker/handle",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-social-2",
+        "title": "Define content types and posting cadence (videos, scripts, photos, blog posts, stories/reels)",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-social-3",
+        "title": "Build a wins/losses content log to draw from",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-social-4",
+        "title": "Eventually: automate posting on Joe's behalf",
+        "status": "not-started"
+      }
+    ],
+    "createdAt": "2026-08-07T19:41:52.604Z",
+    "projectId": null,
+    "parentTaskId": null
+  },
+  {
+    "id": "1786131712902",
+    "title": "Deal scraper agent for RVP lead sourcing",
+    "status": "not-started",
+    "priority": "Low",
+    "effort": "L",
+    "timeEstimate": "l",
+    "description": "An agent/bot that monitors the deal channels Joe already has access to (Facebook groups, Discord, websites, emails) to surface deals he's missing -- because he isn't scrolling those resources daily, weekly, or sometimes even monthly.",
+    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-07); not yet scoped or started. First real subtask: inventory the actual channels Joe has access to (which FB groups, which Discord servers, which websites, which email lists) before any scraping design. Worth flagging early: FB groups and Discord servers commonly have Terms of Service restrictions on automated scraping -- the access method per channel needs real consideration, not just 'build a scraper', before this goes further.",
+    "notes": "Ties into rvp-agent's existing disposition/acquisition pipeline as a feed, not a replacement -- new deals found here would still go through the same log-disposition-activity.md-style review, not auto-added.",
+    "effortJustification": "Not yet scoped -- placeholder estimate pending design.",
+    "timeJustification": "Not yet scoped -- placeholder estimate pending design.",
+    "tags": [
+      "rvp",
+      "deal-sourcing",
+      "scraping",
+      "automation",
+      "lead-gen",
+      "ai-os",
+      "personal-ai-os"
+    ],
+    "blockedBy": [],
+    "benefitsFrom": [],
+    "dependencyNotes": "",
+    "subTasks": [
+      {
+        "id": "sub-scraper-1",
+        "title": "Inventory all deal channels Joe has access to (FB groups, Discord, websites, email lists)",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-scraper-2",
+        "title": "Decide access/monitoring method per channel, respecting each platform's ToS",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-scraper-3",
+        "title": "Design how a found deal gets surfaced to Joe for review (not auto-added to RVP data)",
+        "status": "not-started"
+      }
+    ],
+    "createdAt": "2026-08-07T19:41:52.902Z",
+    "projectId": null,
+    "parentTaskId": null
   }
 ]

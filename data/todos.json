@@ -2431,5 +2431,42 @@
     "createdAt": "2026-08-10T20:42:58.359Z",
     "projectId": null,
     "parentTaskId": null
+  },
+  {
+    "id": "1786396172211",
+    "title": "Offline mode for the toDoTracker webapp/mobile app",
+    "status": "not-started",
+    "priority": "Medium",
+    "effort": "L",
+    "timeEstimate": "l",
+    "description": "Allow viewing and updating todos in the webapp (and any future mobile app) without an active internet connection -- changes made offline should queue locally and sync once connectivity returns.",
+    "implementationNotes": "Captured 2026-08-10 per Joes direction. Not yet scoped: local storage/cache strategy (e.g. IndexedDB/service worker for the webapp), conflict resolution when the same todo was edited both offline and on the live Railway API before sync, and whether a dedicated mobile app is even planned or this stays web-only (PWA).",
+    "notes": "No offline capability exists today -- the app requires a live connection to the Railway API for every read/write.",
+    "effortJustification": "Not yet scoped -- placeholder estimate pending design (service worker + local queue + sync/conflict logic is nontrivial).",
+    "timeJustification": "Not yet scoped -- placeholder estimate pending design.",
+    "tags": [
+      "offline",
+      "webapp",
+      "mobileapp",
+      "sync"
+    ],
+    "blockedBy": [],
+    "benefitsFrom": [],
+    "dependencyNotes": "",
+    "subTasks": [
+      {
+        "id": "sub-offline-1",
+        "title": "Decide web-only PWA vs. dedicated mobile app scope",
+        "status": "not-started"
+      },
+      {
+        "id": "sub-offline-2",
+        "title": "Pick local storage/queue mechanism and conflict-resolution strategy for syncing back to the live API",
+        "status": "not-started"
+      }
+    ],
+    "createdAt": "2026-08-10T21:09:32.211Z",
+    "projectId": null,
+    "parentTaskId": null
   }
 ]

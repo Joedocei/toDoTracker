@@ -2000,7 +2000,7 @@
     "effort": "M",
     "timeEstimate": "m",
     "description": "Give the RVP agent its own todo list for deal follow-ups and buyer/seller actions, instead of those living only in disposition-activity.csv/active-deals.yaml or Joe's head.",
-    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-06); not yet scoped or started. Would likely be a new current/ file in rvp-agent/, similar in spirit to the existing disposition-activity.csv and buyer-contacts.csv single-source files.\n\nUpdate 2026-08-10 (Joe): needs a Zoho connection first -- RVPs own task/CRM data lives in Zoho, so this cannot meaningfully start until a Zoho integration exists. No Zoho connection is built or even design-reviewed yet.",
+    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-06); not yet scoped or started. Would likely be a new current/ file in rvp-agent/, similar in spirit to the existing disposition-activity.csv and buyer-contacts.csv single-source files.\n\nUpdate 2026-08-10 (Joe): needs a Zoho connection first -- RVPs own task/CRM data lives in Zoho, so this cannot meaningfully start until a Zoho integration exists. No Zoho connection is built or even design-reviewed yet.\n\nUpdate 2026-08-10, same day (Joe): confirmed the tool is Zoho Connect (zoho.com/connect) specifically -- the companys work/task-tracking tool -- not Zoho CRM or another Zoho product. See control-center/outputs/connection-reviews/2026-08-10-zoho-connection-readiness-review.md (DEFER -- Connect has no read-only API tier or MCP connector of its own; still needs which Connect module/board RVP actually uses confirmed before scoping).",
     "notes": "Claude could draft the file schema and a log-rvp-todos workflow the same way the existing disposition-activity/buyer-contacts workflows were built.",
     "effortJustification": "Not yet scoped — placeholder estimate pending design.",
     "timeJustification": "Not yet scoped — placeholder estimate pending design.",
@@ -2053,7 +2053,7 @@
     "effort": "S",
     "timeEstimate": "s",
     "description": "Track calls/deals that ended in a lost or closed-out outcome for RVP, separate from the active disposition-activity.csv log, to see patterns over time.",
-    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-06); not yet scoped or started.\n\nUpdate 2026-08-10 (Joe): needs a Salesforce connection first. Not yet built or even design-reviewed -- source-registry.yaml lists salesforce as NOT CONNECTED with no readiness review yet.",
+    "implementationNotes": "Captured from a Personal-AI-OS planning session (2026-08-06); not yet scoped or started.\n\nUpdate 2026-08-10 (Joe): needs a Salesforce connection first. Not yet built or even design-reviewed -- source-registry.yaml lists salesforce as NOT CONNECTED with no readiness review yet.\n\nUpdate 2026-08-10, same day (Joe): confirmed LeftMain and Salesforce are the same system -- Salesforce is the actual CRM/platform, LeftMain is a real-estate-investor white label on top of it. One org, one future connection. Readiness review done: control-center/outputs/connection-reviews/2026-08-10-salesforce-connection-readiness-review.md (DEFER on queue sequencing only -- wait for the RVP Google Drive integration to be actually connected first, per the standing build-order rule).",
     "notes": "Claude could add a closed_lost activity_type or a small separate log once there's enough real data to justify the distinction.",
     "effortJustification": "Not yet scoped — placeholder estimate pending design.",
     "timeJustification": "Not yet scoped — placeholder estimate pending design.",
@@ -2402,13 +2402,13 @@
   },
   {
     "id": "1786394578359",
-    "title": "Connect the Jarvis Mandela agent to Zoho",
+    "title": "Connect the Jarvis Mandela agent to Zoho Connect",
     "status": "not-started",
     "priority": "Low",
     "effort": "L",
     "timeEstimate": "l",
-    "description": "Connect the Personal AI OS (\"Jarvis Mandela\") to Zoho -- a separate, unresearched system, split out from the combined toDoTracker+Zoho idea per Joes direction.",
-    "implementationNotes": "Split out 2026-08-10 from Connect the Jarvis Mandela agent to the toDoTracker todos dashboard (id 1786123113308) per Joes explicit direction -- Zoho is a separate issue deserving its own todo. Not yet scoped: which Zoho product(s) (CRM, Projects, etc.), what data/actions are needed, auth mechanism, none of it investigated yet.",
+    "description": "Connect the Personal AI OS (\"Jarvis Mandela\") to Zoho Connect (zoho.com/connect) -- the companys work/task-tracking tool, confirmed by Joe 2026-08-10 as the specific Zoho product meant here (not CRM, Books, or another Zoho product).",
+    "implementationNotes": "Split out 2026-08-10 from Connect the Jarvis Mandela agent to the toDoTracker todos dashboard (id 1786123113308) per Joes explicit direction -- Zoho is a separate issue deserving its own todo. Originally unscoped: which Zoho product(s), what data/actions are needed, auth mechanism.\n\nUpdate 2026-08-10, same day (Joe): product identified -- Zoho Connect specifically. Connection-readiness review done: control-center/outputs/connection-reviews/2026-08-10-zoho-connection-readiness-review.md (DEFER -- Connect has no read-only API tier or MCP connector of its own, unlike Zoho CRM/Billing/Mail/Assist/Cliq, so any future integration is a fully custom REST client). Still open: which Connect module/board RVP actually uses for task tracking, and whether this should be a read-only mirror or something that writes back to Connect.",
     "notes": "No Zoho integration exists anywhere in this workspace yet -- this is a from-scratch scoping task before any build.",
     "effortJustification": "Not yet scoped -- placeholder estimate pending design.",
     "timeJustification": "Not yet scoped -- placeholder estimate pending design.",
@@ -2425,6 +2425,11 @@
       {
         "id": "sub-zoho-1",
         "title": "Identify which Zoho product(s) and what data/actions are actually needed",
+        "status": "done"
+      },
+      {
+        "id": "sub-zoho-2",
+        "title": "Confirm which Zoho Connect module/board RVP task tracking lives in, and whether read-only mirror vs. write-back is needed",
         "status": "not-started"
       }
     ],
